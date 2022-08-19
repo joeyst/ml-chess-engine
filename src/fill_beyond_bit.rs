@@ -11,35 +11,35 @@ fn general(mut bit: u64, direction: fn(u64) -> u64) -> u64 {
 }
 
 pub fn right(mut bit: u64) -> u64 {
-  general(bit, crate::blocked::next_bit::right)
+  general(bit, crate::safe_next_bit::next_bit::right)
 }
 
 pub fn left(mut bit: u64) -> u64 {
-  general(bit, crate::blocked::next_bit::left)
+  general(bit, crate::safe_next_bit::next_bit::left)
 }
 
 pub fn up(mut bit: u64) -> u64 {
-  general(bit, crate::blocked::next_bit::up)
+  general(bit, crate::safe_next_bit::next_bit::up)
 }
 
 pub fn down(mut bit: u64) -> u64 {
-  general(bit, crate::blocked::next_bit::down)
+  general(bit, crate::safe_next_bit::next_bit::down)
 }
 
 pub fn up_left(mut bit: u64) -> u64 {
-  general(bit, crate::blocked::next_bit::up_left)
+  general(bit, crate::safe_next_bit::next_bit::up_left)
 }
 
 pub fn up_right(mut bit: u64) -> u64 {
-  general(bit, crate::blocked::next_bit::up_right)
+  general(bit, crate::safe_next_bit::next_bit::up_right)
 }
 
 pub fn down_left(mut bit: u64) -> u64 {
-  general(bit, crate::blocked::next_bit::down_left)
+  general(bit, crate::safe_next_bit::next_bit::down_left)
 }
 
 pub fn down_right(mut bit: u64) -> u64 {
-  general(bit, crate::blocked::next_bit::down_right)
+  general(bit, crate::safe_next_bit::next_bit::down_right)
 }
 
 
