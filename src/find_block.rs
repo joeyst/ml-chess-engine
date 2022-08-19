@@ -1,6 +1,14 @@
 use crate::find_occ_bit;
 use crate::fill_beyond_bit;
 
+pub fn cross(board: u64, bit: u64) -> u64 {
+  right(board, bit) | left(board, bit) | up(board, bit) | down(board, bit)
+}
+
+pub fn diagonal(board: u64, bit: u64) -> u64 {
+  up_left(board, bit) | up_right(board, bit) | down_left(board, bit) | down_right(board, bit)
+}
+
 fn general(board: u64, mut bit: u64, find_occ_direction: fn(u64, u64) -> u64, fill_direction: fn(u64) -> u64) -> u64 {
   bit = find_occ_direction(board, bit);
   if (bit == 0) {
@@ -63,6 +71,16 @@ mod test {
   #[test]
   fn finds_blocked_down() {
     assert!(down(BOARD, 1 << 11) == 0);
+  }
+
+  #[test]
+  fn finds_blocked_cross() {
+    assert!(cross(BOARD | 0xFF000000, 1 << 11) == 0x080808080000E300);
+  }
+
+  #[test]
+  fn finds_blocked_diagonal() {
+    assert!(diagonal(BOARD | 0xFF000000, 1 << 11) == 0x0000804122000000);
   }
   
 }
