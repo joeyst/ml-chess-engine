@@ -34,7 +34,6 @@ impl DiagonalMoveMap {
     if !self.map.contains_key(&square) {
       self.map.insert(square, HashMap::<u64, u64>::new());
     }
-    let mut curr_map = &mut self.map.get(&square).expect("");
     if !self.map.get_mut(&square).expect("").contains_key(&board) {
       self.map.get_mut(&square).expect("").insert(board, crate::open_squares::diagonal(board, square));
     }

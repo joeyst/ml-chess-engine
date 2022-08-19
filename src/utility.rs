@@ -95,6 +95,24 @@ pub fn bit_shift_two_way(board: u64, shift: i8) -> u64 {
   board << shift
 }
 
+pub fn isolate_lsb(board: u64) -> u64 {
+  for i in 0..64 {
+    if (board & (1 << i) != 0) {
+      return (1 << i);
+    }
+  }
+  0
+}
+
+pub fn isolate_msb(board: u64) -> u64 {
+  for i in (0..64).rev() {
+    if (board & (1 << i) != 0) {
+      return (1 << i);
+    }
+  }
+  0
+}
+
 #[cfg(test)]
 mod test {
   use super::*;
@@ -146,6 +164,50 @@ mod test {
     #[test] 
     fn doesnt_find_bit_on_center_of_board() {
       assert!(border_bit(0x400) == false);
+    }
+  }
+
+  mod lsb_and_msb_tests {
+    use super::*;
+    #[test]
+    fn finds_no_lsb() {
+      assert!(isolate_lsb(0) == 0);
+    }
+
+    #[test]
+    fn isolates_bottom_bit() {
+      assert!(isolate_lsb(1) == 1);
+    }
+
+    #[test] 
+    fn isolates_bottom_bit_when_there_are_more_bits() {
+      assert!(isolate_lsb(0xFF04) == 4);
+    }
+
+    #[test]
+    fn isolates_bottom_bit_when_its_max_possible_value() {
+      print_board(0x8000000000000000);
+      assert!(isolate_lsb(0x8000000000000000) == 0x8000000000000000);
+    }
+
+    #[test]
+    fn finds_no_msb() {
+      assert!(isolate_msb(0) == 0);
+    }
+
+    #[test]
+    fn finds_bottom_msb() {
+      assert!(isolate_msb(1) == 1);
+    }
+
+    #[test]
+    fn finds_top_bit_when_there_are_lower_bits() {
+      assert!(isolate_msb(0x8FF00FF) == 0x8000000);
+    }
+
+    #[test]
+    fn finds_top_bit_when_minimum_possible_value() {
+      assert!(isolate_msb(0x1) == 1);
     }
   }
 }

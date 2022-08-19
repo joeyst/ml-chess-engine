@@ -8,6 +8,7 @@ mod fill_beyond_bit;
 mod find_block;
 mod map;
 mod open_squares;
+mod r#move;
 use crate::mask_for_square::for_rank;
 use crate::utility::print_board;
 
