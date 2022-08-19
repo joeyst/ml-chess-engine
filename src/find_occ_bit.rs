@@ -8,35 +8,35 @@ fn general(board: u64, mut bit: u64, direction: fn(u64) -> u64) -> u64 {
   return 0;
 }
 
-pub fn up(board: u64, mut bit: u64) -> u64 {
+pub fn up(board: u64, bit: u64) -> u64 {
   general(board, bit, crate::safe_next_bit::next_bit::up)
 }
 
-pub fn down(board: u64, mut bit: u64) -> u64 {
+pub fn down(board: u64, bit: u64) -> u64 {
   general(board, bit, crate::safe_next_bit::next_bit::down)
 }
 
-pub fn right(board: u64, mut bit: u64) -> u64 {
+pub fn right(board: u64, bit: u64) -> u64 {
   general(board, bit, crate::safe_next_bit::next_bit::right)
 }
 
-pub fn left(board: u64, mut bit: u64) -> u64 {
+pub fn left(board: u64, bit: u64) -> u64 {
   general(board, bit, crate::safe_next_bit::next_bit::left)
 }
 
-pub fn up_right(board: u64, mut bit: u64) -> u64 {
+pub fn up_right(board: u64, bit: u64) -> u64 {
   general(board, bit, crate::safe_next_bit::next_bit::up_right)
 }
 
-pub fn up_left(board: u64, mut bit: u64) -> u64 {
+pub fn up_left(board: u64, bit: u64) -> u64 {
   general(board, bit, crate::safe_next_bit::next_bit::up_left)
 }
 
-pub fn down_right(board: u64, mut bit: u64) -> u64 {
+pub fn down_right(board: u64, bit: u64) -> u64 {
   general(board, bit, crate::safe_next_bit::next_bit::down_right)
 }
 
-pub fn down_left(board: u64, mut bit: u64) -> u64 {
+pub fn down_left(board: u64, bit: u64) -> u64 {
   general(board, bit, crate::safe_next_bit::next_bit::down_left)
 }
 

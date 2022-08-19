@@ -11,7 +11,9 @@ mod open_squares;
 use crate::mask_for_square::for_rank;
 use crate::utility::print_board;
 
-
 fn main() {
-
+  let mut hmap = crate::map::make_cross_move_map();
+  print_board(0x5555555555555555);
+  let mut open_squares: u64 = hmap.get_value(1 << 14, 0x5555555555555555);
+  print_board(open_squares);
 }

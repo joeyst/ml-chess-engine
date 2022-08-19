@@ -2,12 +2,12 @@ use crate::constants::*;
 use crate::utility::print_board;
 
 fn general_shift(mut board: u64, shift: u8, direction: fn(u64) -> u64) -> u64 {
-  for s in 0..shift { board = direction(board); }
+  for _s in 0..shift { board = direction(board); }
   board
 }
 
 pub fn horizontal(board: u64, file: i8) -> u64 {
-  if (file < 0) {
+  if file < 0 {
     return left(board, (file * -1).try_into().unwrap());
   } else {
     return right(board, file.try_into().unwrap());
@@ -15,7 +15,7 @@ pub fn horizontal(board: u64, file: i8) -> u64 {
 }
 
 pub fn vertical(board: u64, rank: i8) -> u64 {
-  if (rank < 0) {
+  if rank < 0 {
     return down(board, (rank * -1).try_into().unwrap());
   } else {
     return up(board, rank.try_into().unwrap());

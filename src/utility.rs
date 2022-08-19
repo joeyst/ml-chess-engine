@@ -6,7 +6,7 @@ pub fn print_board(mut board: u64) {
     horizontal += "\n";
     horizontal = format!("{}{}", horizontal, rank.to_string());
     horizontal += "   ";
-    for file in 0..8 {
+    for _file in 0..8 {
       horizontal = format!("{}{}", horizontal, (board & 1).to_string());
       horizontal += " ";
       board >>= 1;

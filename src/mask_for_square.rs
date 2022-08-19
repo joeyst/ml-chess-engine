@@ -26,7 +26,7 @@ pub fn for_forward_diagonal(square: u8) -> u64 {
 pub fn for_backward_diagonal(square: u8) -> u64 {
   let rank: i8 = (square / 8).try_into().unwrap();
   let file: i8 = (square % 8).try_into().unwrap();
-  let shift: i8 = ((rank + file) - 7);
+  let shift: i8 = (rank + file) - 7;
   crate::safe_shift::horizontal(BACKWARD_DIAGONAL, shift)
 }
 
