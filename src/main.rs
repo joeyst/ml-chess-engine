@@ -9,6 +9,8 @@ mod find_block;
 mod map;
 mod open_squares;
 mod r#move;
+mod split_state;
+mod board;
 use crate::mask_for_square::for_rank;
 use crate::utility::print_board;
 
