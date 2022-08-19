@@ -1,6 +1,6 @@
 use crate::utility::*;
 
-
+// module should be named next_bit_in_direction
 // given bit, will find bit one in a specific direction, returning an empty board if crossing a border. 
 pub mod next_bit {
   use super::*;
@@ -8,7 +8,7 @@ pub mod next_bit {
     if border_check(bit) {
       return 0;
     }
-    bit <<= shift;
+    bit = bit_shift_two_way(bit, shift);
     bit
   }
   pub fn right(bit: u64) -> u64 {
