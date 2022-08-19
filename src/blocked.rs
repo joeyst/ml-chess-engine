@@ -2,7 +2,7 @@ use crate::utility::*;
 
 
 // given bit, will find bit one in a specific direction, returning an empty board if crossing a border. 
-mod next_bit {
+pub mod next_bit {
   use super::*;
   fn next(mut bit: u64, shift: i8, border_check: fn(u64) -> bool) -> u64 {
     if border_check(bit) {
