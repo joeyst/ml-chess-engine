@@ -1,5 +1,8 @@
 use crate::constants::FIRST_FILE;
 use crate::constants::FIRST_RANK;
+use crate::constants::FORWARD_DIAGONAL;
+use crate::constants::BACKWARD_DIAGONAL;
+use crate::safe_shift;
 
 pub fn for_file(file: u8) -> u64 {
   FIRST_FILE << file
@@ -11,6 +14,25 @@ pub fn for_rank(rank: u8) -> u64 {
 
 pub fn for_square(square: u8) -> u64 {
   for_file(square % 8) | for_rank(square / 8)
+}
+
+pub fn for_forward_diagonal(square: u8) -> u64 {
+  let rank: i8 = (square / 8).try_into().unwrap();
+  let file: i8 = (square % 8).try_into().unwrap();
+  let shift: i8 = file - rank;
+  crate::safe_shift::horizontal(FORWARD_DIAGONAL, shift)
+}
+
+pub fn for_backward_diagonal(square: u8) -> u64 {
+  let rank: i8 = (square / 8).try_into().unwrap();
+  let file: i8 = (square % 8).try_into().unwrap();
+  let shift: i8 = ((rank + file) - 7);
+  crate::safe_shift::horizontal(BACKWARD_DIAGONAL, shift)
+}
+
+
+pub fn for_square_diagonal(square: u8) -> u64 {
+  for_forward_diagonal(square) | for_backward_diagonal(square)
 }
 
 #[cfg(test)]

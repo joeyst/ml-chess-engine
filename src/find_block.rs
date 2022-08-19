@@ -11,7 +11,7 @@ pub fn diagonal(board: u64, bit: u64) -> u64 {
 
 fn general(board: u64, mut bit: u64, find_occ_direction: fn(u64, u64) -> u64, fill_direction: fn(u64) -> u64) -> u64 {
   bit = find_occ_direction(board, bit);
-  if (bit == 0) {
+  if bit == 0 {
     return 0;
   }
   fill_direction(bit)
