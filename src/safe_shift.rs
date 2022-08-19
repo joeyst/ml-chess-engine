@@ -1,24 +1,25 @@
 use crate::constants::*;
 use crate::utility::print_board;
 
-pub fn right(mut board: u64, file: u8) -> u64 {
-  for f in 0..file { board = safe_shift_right(board); }
+fn general_shift(mut board: u64, shift: u8, direction: fn(u64) -> u64) -> u64 {
+  for s in 0..shift { board = direction(board); }
   board
 }
 
-pub fn left(mut board: u64, file: u8) -> u64 {
-  for f in 0..file { board = safe_shift_left(board); }
-  board
+pub fn right(board: u64, file: u8) -> u64 {
+  general_shift(board, file, safe_shift_right)
 }
 
-pub fn up(mut board: u64, rank: u8) -> u64 {
-  for r in 0..rank { board = safe_shift_up(board); }
-  board
+pub fn left(board: u64, file: u8) -> u64 {
+  general_shift(board, file, safe_shift_left)
 }
 
-pub fn down(mut board: u64, rank: u8) -> u64 {
-  for r in 0..rank { board = safe_shift_down(board); }
-  board
+pub fn up(board: u64, rank: u8) -> u64 {
+  general_shift(board, rank, safe_shift_up)
+}
+
+pub fn down(board: u64, rank: u8) -> u64 {
+  general_shift(board, rank, safe_shift_down)
 }
 
 fn safe_shift_right(board: u64) -> u64 {
