@@ -1,0 +1,82 @@
+use crate::constants::FIRST_FILE;
+use crate::constants::FIRST_RANK;
+
+pub fn for_file(file: u8) -> u64 {
+  FIRST_FILE << file
+}
+
+pub fn for_rank(rank: u8) -> u64 {
+  FIRST_RANK << (8 * rank)
+}
+
+pub fn for_square(square: u8) -> u64 {
+  for_file(square % 8) | for_rank(square / 8)
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  mod for_file {
+    use super::*;
+    #[test]
+    fn calculates_last_file() {
+      const FILE: u8 = 7;
+      assert!(for_file(FILE) == 0x8080808080808080);
+    }
+
+    #[test]
+    fn calculates_second_to_last_file() {
+      const FILE: u8 = 6;
+      assert!(for_file(FILE) == 0x4040404040404040);
+    }
+
+    #[test]
+    fn calculates_first_file() {
+      const FILE: u8 = 0;
+      assert!(for_file(FILE) == 0x101010101010101);
+    }
+  }
+
+  mod for_rank {
+    use super::*;
+    #[test]
+    fn calculates_last_rank() {
+      const RANK: u8 = 7;
+      assert!(for_rank(RANK) == 0xFF00000000000000);
+    }
+
+    #[test]
+    fn calculates_second_to_last_rank() {
+      const RANK: u8 = 6;
+      assert!(for_rank(RANK) == 0xFF000000000000);
+    }
+
+    #[test]
+    fn calculates_first_rank() {
+      const RANK: u8 = 0;
+      assert!(for_rank(RANK) == 0xFF);
+    }
+  }
+
+  mod for_square {
+    use super::*;
+
+    #[test]
+    fn calculates_last_square() {
+      const SQUARE: u8 = 63;
+      assert!(for_square(SQUARE) == 0xFF80808080808080);
+    }
+
+    #[test]
+    fn calculates_first_square() {
+      const SQUARE: u8 = 0;
+      assert!(for_square(SQUARE) == 0x1010101010101FF);
+    }
+
+    #[test]
+    fn calculates_square_43() {
+      const SQUARE: u8 = 43;
+      assert!(for_square(SQUARE) == 0x0808FF0808080808);
+    }
+  }
+}
