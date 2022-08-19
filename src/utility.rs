@@ -32,8 +32,67 @@ pub fn bit_to_index(mut bit: u64) -> u8 {
 
 pub fn border_bit(bit: u64) -> bool {
   let index: u8 = bit_to_index(bit) - 1;
-  println!("{}", index);
   index % 8 == 0 || index % 8 == 7 || index / 8 == 0 || index / 8 == 7
+}
+
+fn border_bit_general(bit: u64, formula: fn(u8) -> bool) -> bool {
+  let index: u8 = bit_to_index(bit) - 1;
+  formula(index)
+}
+
+fn top_border(index: u8) -> bool {
+  index / 8 == 7
+}
+
+fn bottom_border(index: u8) -> bool {
+  index / 8 == 0
+}
+
+fn right_border(index: u8) -> bool {
+  index % 8 == 7
+}
+
+fn left_border(index: u8) -> bool {
+  index % 8 == 0
+}
+
+pub fn bottom_bit(bit: u64) -> bool {
+  border_bit_general(bit, bottom_border)
+}
+
+pub fn top_bit(bit: u64) -> bool {
+  border_bit_general(bit, top_border)
+}
+
+pub fn right_bit(bit: u64) -> bool {
+  border_bit_general(bit, right_border)
+}
+
+pub fn left_bit(bit: u64) -> bool {
+  border_bit_general(bit, left_border)
+}
+
+pub fn up_right_bit(bit: u64) -> bool {
+  right_bit(bit) || top_bit(bit)
+}
+
+pub fn up_left_bit(bit: u64) -> bool {
+  left_bit(bit) || top_bit(bit)
+}
+
+pub fn bottom_right_bit(bit: u64) -> bool {
+  right_bit(bit) || bottom_bit(bit)
+}
+
+pub fn bottom_left_bit(bit: u64) -> bool {
+  left_bit(bit) || bottom_bit(bit)
+}
+
+pub fn bit_shift_two_way(board: u64, shift: i8) -> u64 {
+  if shift < 0 {
+    return board >> (shift * -1);
+  } 
+  board << shift
 }
 
 #[cfg(test)]
