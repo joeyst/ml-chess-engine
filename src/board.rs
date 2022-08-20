@@ -34,6 +34,10 @@ pub fn get_all_occupation(board: [u64; 13]) -> u64 {
   mut_occ_board
 }
 
+pub fn get_all_not_occupation(board: [u64; 13]) -> u64 {
+  get_all_occupation(board) ^ WHOLE_BOARD
+}
+
 pub fn get_ally_occupation(board: [u64; 13], turn: u8) -> u64 {
   if turn % 2 == 0 {
     get_black_occupation(board)

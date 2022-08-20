@@ -14,6 +14,7 @@ mod r#move;
 mod split_state;
 mod board;
 mod crop;
+mod pawn_move;
 use crate::map::CROSS_MOVE_MAP;
 use crate::mask_for_square::for_rank;
 use crate::utility::print_board;

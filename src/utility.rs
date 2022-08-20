@@ -30,6 +30,15 @@ pub fn bit_to_index(mut bit: u64) -> u8 {
   index
 }
 
+#[inline(always)]
+pub fn two_way_shift(board: u64, shift: i8) -> u64 {
+  if shift < 0 {
+    board >> shift.abs()
+  } else {
+    board << shift
+  }
+}
+
 pub fn border_bit(bit: u64) -> bool {
   let index: u8 = bit_to_index(bit) - 1;
   index % 8 == 0 || index % 8 == 7 || index / 8 == 0 || index / 8 == 7
