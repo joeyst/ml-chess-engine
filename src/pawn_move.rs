@@ -96,6 +96,6 @@ pub fn bpawn_left(pawns: u64, occupation: u64) -> u64 {
 }
 
 pub fn bpawn_two(mut pawns: u64, occupation: u64) -> u64 {
-  pawns = wpawn_one(pawns, occupation);
-  wpawn_one(pawns, occupation) & FIFTH_RANK
+  pawns = bpawn_one(pawns, occupation);
+  bpawn_one(pawns, occupation) & FIFTH_RANK
 }

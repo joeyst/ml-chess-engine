@@ -28,6 +28,14 @@ pub fn bstate(board: [u64; 13]) -> Vec<[u64; 13]> {
   gstate(board, vec![brook, bbishop, bqueen, bpawn, bking, bknight])
 }
 
+pub fn states_for_turn(board: [u64; 13], turn: u8) -> Vec<[u64; 13]> {
+  if turn % 2 == 0 {
+    bstate(board)
+  } else {
+    wstate(board)
+  }
+}
+
 pub fn sliding_move_general(board: [u64; 13], slice_index: u8, map: &Mutex<MoveMap>, team: u8) -> Vec<[u64; 13]> {
   let mut possible_states: Vec<[u64; 13]> = Vec::new();
   let occ: u64 = get_all_occupation(board);

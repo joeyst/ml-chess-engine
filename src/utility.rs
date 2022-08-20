@@ -27,7 +27,7 @@ pub fn print_board(mut board: u64) {
 pub fn find_occupied_slice_index(state: [u64; 13], square_index: u8) -> u8 {
   let desired_square: u64 = 1 << square_index;
   let mut count: u8 = 0;
-  let mut found_index: u8 = 13;
+  let mut found_index: u8 = 12;
 
   for slice_index in 0..12 {
     if (state[slice_index as usize] & desired_square) != 0 {
@@ -55,7 +55,7 @@ pub fn print_board_pieces(state: [u64; 13]) {
     (BBISHOP, 'b'),
     (BQUEEN, 'q'),
     (BKING, 'k'),
-    (13, ' ')
+    (12, ' ')
   ]);
 
   let mut horizontals: Vec<String> = Vec::new();
