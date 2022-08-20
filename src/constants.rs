@@ -24,3 +24,6 @@ pub static WKING: u8 = 5;
 pub static BPAWN: u8 = 9;
 pub static BKNIGHT: u8 = 10;
 pub static BKING: u8 = 11;
+
+pub static BLACK_TEAM: u8 = 0;
+pub static WHITE_TEAM: u8 = 1;

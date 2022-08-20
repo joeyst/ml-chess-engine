@@ -3,6 +3,8 @@ use crate::split_state::*;
 use crate::board::{get_all_occupation, get_slice_occupation, get_not_ally_occupation};
 use crate::map::CROSS_MOVE_MAP;
 use crate::print_board;
+use crate::map::MoveMap;
+use std::sync::Mutex;
 
 /*
 pub fn wstate(board: [u64; 13]) -> Vec<[u64; 13]> {
@@ -10,22 +12,23 @@ pub fn wstate(board: [u64; 13]) -> Vec<[u64; 13]> {
 }
 */
 
-
-
-pub fn wrook(board: [u64; 13]) -> Vec<[u64; 13]> {
-  let slice_index: u8 = WROOK;
+pub fn sliding_move_general(board: [u64; 13], slice_index: u8, map: &Mutex<MoveMap>, team: u8) -> Vec<[u64; 13]> {
   let mut possible_states: Vec<[u64; 13]> = Vec::new();
   let occ: u64 = get_all_occupation(board);
   let mut open_squares: u64;
 
-  for rook in split_slice_into_slices(get_slice_occupation(board, slice_index)).iter() {
-    open_squares = CROSS_MOVE_MAP.lock().unwrap().get_value(*rook, occ);
-    open_squares &= get_not_ally_occupation(board, 1);
-    for state in split_board_into_updated_states(*rook, open_squares, board, WROOK).iter() {
+  for piece in split_slice_into_slices(get_slice_occupation(board, slice_index)).iter() {
+    open_squares = map.lock().unwrap().get_value(*piece, occ);
+    open_squares &= get_not_ally_occupation(board, team);
+    for state in split_board_into_updated_states(*piece, open_squares, board, slice_index).iter() {
       possible_states.push(*state);
     }
   }
   possible_states
+}
+
+pub fn wrook(board: [u64; 13]) -> Vec<[u64; 13]> {
+  sliding_move_general(board, WROOK, &CROSS_MOVE_MAP, WHITE_TEAM)
 }
 
 #[cfg(test)]
