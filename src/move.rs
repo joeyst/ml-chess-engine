@@ -1,7 +1,7 @@
 use crate::constants::*;
 use crate::split_state::*;
 use crate::board::{get_all_occupation, get_slice_occupation, get_not_ally_occupation};
-use crate::map::CROSS_MOVE_MAP;
+use crate::map::{CROSS_MOVE_MAP, DIAGONAL_MOVE_MAP};
 use crate::print_board;
 use crate::map::MoveMap;
 use std::sync::Mutex;
@@ -30,6 +30,33 @@ pub fn sliding_move_general(board: [u64; 13], slice_index: u8, map: &Mutex<MoveM
 pub fn wrook(board: [u64; 13]) -> Vec<[u64; 13]> {
   sliding_move_general(board, WROOK, &CROSS_MOVE_MAP, WHITE_TEAM)
 }
+
+pub fn brook(board: [u64; 13]) -> Vec<[u64; 13]> {
+  sliding_move_general(board, BROOK, &CROSS_MOVE_MAP, BLACK_TEAM)
+}
+
+pub fn wbishop(board: [u64; 13]) -> Vec<[u64; 13]> {
+  sliding_move_general(board, WBISHOP, &DIAGONAL_MOVE_MAP, WHITE_TEAM)
+}
+
+pub fn bbishop(board: [u64; 13]) -> Vec<[u64; 13]> {
+  sliding_move_general(board, BBISHOP, &DIAGONAL_MOVE_MAP, BLACK_TEAM)
+}
+
+pub fn wqueen(board: [u64; 13]) -> Vec<[u64; 13]> {
+  let mut states: Vec<[u64; 13]> = Vec::new();
+  for state in sliding_move_general(board, WQUEEN, &CROSS_MOVE_MAP, WHITE_TEAM) {states.push(state)}
+  for state in sliding_move_general(board, WQUEEN, &DIAGONAL_MOVE_MAP, WHITE_TEAM) {states.push(state)}
+  states
+}
+
+pub fn bqueen(board: [u64; 13]) -> Vec<[u64; 13]> {
+  let mut states: Vec<[u64; 13]> = Vec::new();
+  for state in sliding_move_general(board, BQUEEN, &CROSS_MOVE_MAP, BLACK_TEAM) {states.push(state)}
+  for state in sliding_move_general(board, BQUEEN, &DIAGONAL_MOVE_MAP, BLACK_TEAM) {states.push(state)}
+  states
+}
+
 
 #[cfg(test)]
 mod test {
