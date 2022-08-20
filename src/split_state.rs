@@ -2,9 +2,9 @@ use crate::utility::isolate_lsb;
 use crate::constants::WHOLE_BOARD;
 use crate::print_board;
 
-fn split_slice_into_slices(mut slice: u64) -> Vec<u64> {
+pub fn split_slice_into_slices(mut slice: u64) -> Vec<u64> {
   let mut slices: Vec<u64> = Vec::new();
-  while (slice != 0) {
+  while slice != 0 {
     slices.push(isolate_lsb(slice));
     slice ^= isolate_lsb(slice);
   }

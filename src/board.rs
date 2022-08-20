@@ -35,7 +35,7 @@ pub fn get_all_occupation(board: [u64; 13]) -> u64 {
 }
 
 pub fn get_ally_occupation(board: [u64; 13], turn: u8) -> u64 {
-  if (turn % 2 == 0) {
+  if turn % 2 == 0 {
     get_black_occupation(board)
   } else {
     get_white_occupation(board)
@@ -43,7 +43,7 @@ pub fn get_ally_occupation(board: [u64; 13], turn: u8) -> u64 {
 }
 
 pub fn get_enemy_occupation(board: [u64; 13], turn: u8) -> u64 {
-  if (turn % 2 == 1) {
+  if turn % 2 == 1 {
     get_black_occupation(board)
   } else {
     get_white_occupation(board)
@@ -51,7 +51,7 @@ pub fn get_enemy_occupation(board: [u64; 13], turn: u8) -> u64 {
 }
 
 pub fn get_not_ally_occupation(board: [u64; 13], turn: u8) -> u64 {
-  if (turn % 2 == 0) {
+  if turn % 2 == 0 {
     get_black_occupation(board) ^ WHOLE_BOARD
   } else {
     get_white_occupation(board) ^ WHOLE_BOARD

@@ -9,3 +9,17 @@ pub static ALL_BUT_LAST_RANK: u64 = 0xFFFFFFFFFFFFFF;
 pub static ALL_BUT_FIRST_RANK: u64 = 0xFFFFFFFFFFFFFF00;
 
 pub static WHOLE_BOARD: u64 = 0xFFFFFFFFFFFFFFFF;
+
+pub static WROOK: u8 = 0;
+pub static WBISHOP: u8 = 1;
+pub static WQUEEN: u8 = 2;
+pub static BROOK: u8 = 6;
+pub static BBISHOP: u8 = 7;
+pub static BQUEEN: u8 = 8;
+
+pub static WPAWN: u8 = 3;
+pub static WKNIGHT: u8 = 4;
+pub static WKING: u8 = 5;
+pub static BPAWN: u8 = 9;
+pub static BKNIGHT: u8 = 10;
+pub static BKING: u8 = 11;

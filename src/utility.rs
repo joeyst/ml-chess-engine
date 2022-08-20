@@ -97,8 +97,8 @@ pub fn bit_shift_two_way(board: u64, shift: i8) -> u64 {
 
 pub fn isolate_lsb(board: u64) -> u64 {
   for i in 0..64 {
-    if (board & (1 << i) != 0) {
-      return (1 << i);
+    if board & (1 << i) != 0 {
+      return 1 << i;
     }
   }
   0
@@ -106,8 +106,8 @@ pub fn isolate_lsb(board: u64) -> u64 {
 
 pub fn isolate_msb(board: u64) -> u64 {
   for i in (0..64).rev() {
-    if (board & (1 << i) != 0) {
-      return (1 << i);
+    if board & (1 << i) != 0 {
+      return 1 << i;
     }
   }
   0
