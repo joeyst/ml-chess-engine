@@ -11,6 +11,7 @@ lazy_static! {
   pub static ref CROSS_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::cross, cross_mask_from_bit));
   pub static ref DIAGONAL_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::diagonal, diagonal_mask_from_bit));
   pub static ref L_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::L_shape, empty_mask_from_bit));
+  pub static ref SQUARE_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::square_shape, empty_mask_from_bit));
 }
 
 pub struct MoveMap {

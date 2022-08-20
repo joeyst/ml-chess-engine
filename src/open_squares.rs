@@ -1,6 +1,7 @@
 use crate::find_block;
 use crate::mask_for_square::for_square;
-use crate::utility::{bit_to_index, print_board, find_squares_in_list_on_board, find_squares_within_given_distance, reduce_square_indices_to_slice};
+use crate::utility::{bit_to_index, print_board, find_squares_in_list_on_board};
+use crate::utility::square_bounds::{find_squares_within_given_distance, reduce_square_indices_to_slice, find_offsets_on_board_within_distance};
 
 pub fn cross(board: u64, bit: u64) -> u64 {
   let block: u64 = crate::find_block::cross(board, bit);
@@ -17,12 +18,11 @@ pub fn diagonal(board: u64, bit: u64) -> u64 {
 }
 
 pub fn L_shape(board: u64, square: u64) -> u64 {
-  let square_index: u8 = bit_to_index(square) - 1;
+  find_offsets_on_board_within_distance(board, square, vec![-15, -17, -10, -6, 6, 10, 15, 17], 2)
+}
 
-  let offsets: Vec<i8> = vec![-15, -17, -10, -6, 6, 10, 15, 17];
-  let mut squares: Vec<u8> = find_squares_in_list_on_board(offsets, square);
-  let new_squares: Vec<u8> = find_squares_within_given_distance(squares.clone(), square_index, 2);
-  reduce_square_indices_to_slice(new_squares)
+pub fn square_shape(board: u64, square: u64) -> u64 {
+  find_offsets_on_board_within_distance(board, square, vec![9, 8, 7, 1, -1, -7, -8, -9], 1)
 }
 
 #[cfg(test)]
@@ -59,4 +59,6 @@ mod test {
   fn finds_L_shape_from_top_right_of_board() {
     assert!(L_shape(0, 1 << 63) == 0x20400000000000);
   }
+
+  
 }
