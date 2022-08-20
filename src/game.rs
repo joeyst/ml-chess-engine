@@ -2,12 +2,37 @@ use crate::user::get_legal_input_state;
 use crate::r#move::states_for_turn;
 use crate::constants::*;
 use crate::utility::print_board_pieces;
+use crate::bot::{make_bot, Bot, basic_eval};
 
-pub fn game() {
+pub fn two_console_game() {
   let mut state: [u64; 13] = setup_board();
-  let mut turn_number: u8 = 0;
+  let mut turn_number: u8 = 1;
   loop {
     play_player_turn(&mut state, &mut turn_number);
+  }
+}
+
+pub fn one_bot_game() {
+  let mut state: [u64; 13] = setup_board();
+  let mut turn_number: u8 = 1;
+
+  let bot: Bot = make_bot(basic_eval, 3, 1);
+  loop {
+    play_player_turn(&mut state, &mut turn_number);
+    play_engine_turn(&bot, &mut state, &mut turn_number);
+  }
+}
+
+pub fn two_bot_game() {
+  let mut state: [u64; 13] = setup_board();
+  let mut turn_number: u8 = 1;
+
+  let bot1: Bot = make_bot(basic_eval, 3, 0);
+  let bot2: Bot = make_bot(basic_eval, 2, 1);
+
+  loop {
+    play_engine_turn(&bot1, &mut state, &mut turn_number);
+    play_engine_turn(&bot2, &mut state, &mut turn_number);
   }
 }
 
@@ -46,5 +71,10 @@ fn play_player_turn(state: &mut [u64; 13], turn_number: &mut u8) {
   let states: Vec<[u64; 13]> = states_for_turn(*state, *turn_number);
   let new_state: [u64; 13] = get_legal_input_state(*state, states);
   *state = new_state;
+  *turn_number += 1;
+}
+
+fn play_engine_turn(engine: &Bot, state: &mut [u64; 13], turn_number: &mut u8) {
+  *state = engine.get_state(*state);
   *turn_number += 1;
 }

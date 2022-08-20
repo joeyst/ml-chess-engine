@@ -17,17 +17,17 @@ mod crop;
 mod pawn_move;
 mod user;
 mod game;
-mod minimax;
+mod bot;
 
 use crate::map::CROSS_MOVE_MAP;
 use crate::mask_for_square::for_rank;
 use crate::utility::{print_board, print_board_pieces};
 use std::io;
-
+use crate::game::{two_console_game, one_bot_game, two_bot_game};
 
 #[macro_use]
 extern crate lazy_static;
 
 fn main() {
-  crate::game::game();
+  
 }
