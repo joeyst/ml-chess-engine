@@ -1,11 +1,16 @@
 use crate::r#move::{wstate, bstate, states_for_turn};
 use crate::constants::*;
 use std::collections::HashMap;
+use std::cmp;
+use rand::thread_rng;
+use crate::rand::prelude::SliceRandom;
+use crate::rand::prelude::IteratorRandom;
+use crate::utility::{greater_than, less_than};
+
 
 pub struct Bot {
-  eval_fn: fn([u64; 13]) -> i8,
-  depth: u8,
-  team: u8
+  eval_fn: fn([u64; 13]) -> i16,
+  depth: u8
 }
 
 lazy_static! {
@@ -26,66 +31,98 @@ lazy_static! {
   ]);
 }
 
-pub fn basic_eval(mut state: [u64; 13]) -> i8 {
-  let mut count: i8 = 0;
+pub fn basic_eval(mut state: [u64; 13]) -> i16 {
+  let mut count: i16 = 0;
   for slice_index in 0..12 {
     while state[slice_index as usize] != 0 {
-      count += BASIC_PIECE_TO_POINT[&slice_index];
+      count += BASIC_PIECE_TO_POINT[&slice_index] as i16;
       state[slice_index as usize] &= state[slice_index as usize] - 1;
     }
   }
   count
 }
 
-pub fn make_bot(eval_function: fn([u64; 13]) -> i8, d: u8, t: u8) -> Bot {
+pub fn make_bot(eval_function: fn([u64; 13]) -> i16, d: u8) -> Bot {
   Bot {
     eval_fn: eval_function,
-    depth: d,
-    team: t
+    depth: d
   }
 }
 
 impl Bot {
-  pub fn get_state(&self, state: [u64; 13]) -> [u64; 13] {
-    self.get_state_for_turn(state)
-  }
-
-  #[inline(always)]
-  pub fn get_state_for_turn(&self, state: [u64; 13]) -> [u64; 13] {
-    if self.team == 0 {
-      *states_for_turn(state, self.team).iter().min_by_key(|s| self.minimax(vec![**s], self.team, self.depth)).unwrap()
+  pub fn get_state(&self, state: [u64; 13], turn_number: u8) -> [u64; 13] {
+    if turn_number % 2 == 0 {
+      let new_state: [u64; 13] = self.get_state_black(state);
+      println!("Evaluation: {}", (self.eval_fn)(new_state));
+      new_state
     } else {
-      *states_for_turn(state, self.team).iter().max_by_key(|s| self.minimax(vec![**s], self.team, self.depth)).unwrap()
+      let new_state: [u64; 13] = self.get_state_white(state);
+      println!("Evaluation: {}", (self.eval_fn)(new_state));
+      new_state
     }
   }
+
   
-  fn minimax(&self, states: Vec<[u64; 13]>, turn_number: u8, depth_left: u8) -> i8 {
-    if depth_left == 0 {
-      self.get_extrema_for_turn(states, turn_number)
+
+  fn get_state_general(&self, state: [u64; 13], turn_number: u8, more_or_less: fn(i16, i16) -> bool, starting_value: i16) -> [u64; 13] {
+    let mut possible_states: Vec<[u64; 13]> = states_for_turn(state, turn_number);
+    let mut candidate_state: [u64; 13] = [0; 13];
+    let mut best_eval: i16 = starting_value;
+    possible_states.shuffle(&mut thread_rng());
+
+    for possible_state in possible_states.iter() {
+      if more_or_less((self.eval_fn)(*possible_state), best_eval) {
+        best_eval = self.minimax(*possible_state, turn_number + 1, 0, -10000, 10000);
+        candidate_state = *possible_state;
+      }
     }
-    else if turn_number % 2 == 0 {
-      states.iter().map(|&s| self.minimax(wstate(s), turn_number + 1, depth_left - 1)).min().unwrap()
-    }
-    else {
-      states.iter().map(|&s| self.minimax(bstate(s), turn_number + 1, depth_left - 1)).max().unwrap()
-    }
+
+    candidate_state
   }
 
-  fn get_extrema_for_turn(&self, states: Vec<[u64; 13]>, turn: u8) -> i8 {
-    if turn % 2 == 0 {
-      self.get_lowest(states)
+  fn get_state_white(&self, state: [u64; 13]) -> [u64; 13] {
+    self.get_state_general(state, 1, greater_than, -10000)
+  }
+
+  fn get_state_black(&self, state: [u64; 13]) -> [u64; 13] {
+    self.get_state_general(state, 0, less_than, 10000)
+  }
+
+  fn minimax(&self, state: [u64; 13], turn_number: u8, depth_gone: u8, mut alpha: i16, mut beta: i16) -> i16 {
+    if depth_gone == self.depth {
+      return (self.eval_fn)(state)
+    }
+    let mut possible_states: Vec<[u64; 13]> = states_for_turn(state, turn_number);
+
+    if turn_number % 2 == 1 {
+      let mut max: i16 = -10000;
+      let mut current_value: i16;
+      
+      for p_state in possible_states {
+        current_value = self.minimax(p_state, turn_number + 1, depth_gone + 1, alpha, beta);
+        max = cmp::max(max, current_value);
+        alpha = cmp::max(alpha, max);
+
+        if alpha >= beta {
+          break;
+        }
+      }
+      max
+
     } else {
-      self.get_highest(states)
-    }
-  }
+      let mut min: i16 = 10000;
+      let mut current_value: i16;
 
-  #[inline(always)]
-  fn get_lowest(&self, states: Vec<[u64; 13]>) -> i8 {
-    states.iter().map(|&s| (self.eval_fn)(s)).min().unwrap()
-  }
+      for p_state in possible_states {
+        current_value = self.minimax(p_state, turn_number + 1, depth_gone + 1, alpha, beta);
+        min = cmp::min(min, current_value);
+        beta = cmp::min(beta, min);
 
-  #[inline(always)]
-  fn get_highest(&self, states: Vec<[u64; 13]>) -> i8 {
-    states.iter().map(|&s| (self.eval_fn)(s)).max().unwrap()
+        if alpha >= beta {
+          break;
+        }
+      }
+      min
+    }    
   }
 }

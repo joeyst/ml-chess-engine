@@ -19,6 +19,8 @@ mod user;
 mod game;
 mod bot;
 
+extern crate rand;
+
 use crate::map::CROSS_MOVE_MAP;
 use crate::mask_for_square::for_rank;
 use crate::utility::{print_board, print_board_pieces};

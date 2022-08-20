@@ -67,16 +67,17 @@ pub fn print_board_pieces(state: [u64; 13]) {
     horizontal += "   ";
     for file in 0..8 {
       horizontal.push(*index_to_letter.get(&find_occupied_slice_index(state, (rank * 8) + file)).unwrap());
-      horizontal += " ";
+      horizontal += "  ";
     }
     horizontals.push(horizontal);
+    horizontals.push(String::from('\n'));
     horizontal = String::from("");
   }
 
-  for rank in 0..8 {
-    print!("{}", horizontals[7 - rank]);
+  for rank in 0..16 {
+    print!("{}", horizontals[15 - rank]);
   }
-  println!("\n    0 1 2 3 4 5 6 7\n\n\n")
+  println!("\n\n    0  1  2  3  4  5  6  7\n\n\n")
 }
 
 pub fn bit_to_index(mut bit: u64) -> u8 {
@@ -95,6 +96,14 @@ pub fn two_way_shift(board: u64, shift: i8) -> u64 {
   } else {
     board << shift
   }
+}
+
+pub fn greater_than(first: i16, second: i16) -> bool {
+  first > second
+}
+
+pub fn less_than(first: i16, second: i16) -> bool {
+  second > first
 }
 
 pub fn border_bit(bit: u64) -> bool {

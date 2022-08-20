@@ -16,7 +16,7 @@ pub fn one_bot_game() {
   let mut state: [u64; 13] = setup_board();
   let mut turn_number: u8 = 1;
 
-  let bot: Bot = make_bot(basic_eval, 3, 1);
+  let bot: Bot = make_bot(basic_eval, 3);
   loop {
     play_player_turn(&mut state, &mut turn_number);
     play_engine_turn(&bot, &mut state, &mut turn_number);
@@ -27,12 +27,12 @@ pub fn two_bot_game() {
   let mut state: [u64; 13] = setup_board();
   let mut turn_number: u8 = 1;
 
-  let bot1: Bot = make_bot(basic_eval, 3, 0);
-  let bot2: Bot = make_bot(basic_eval, 2, 1);
+  let bot1: Bot = make_bot(basic_eval, 5);
+  let bot2: Bot = make_bot(basic_eval, 5);
 
   loop {
-    play_engine_turn(&bot1, &mut state, &mut turn_number);
     play_engine_turn(&bot2, &mut state, &mut turn_number);
+    play_engine_turn(&bot1, &mut state, &mut turn_number);
   }
 }
 
@@ -75,7 +75,7 @@ fn play_player_turn(state: &mut [u64; 13], turn_number: &mut u8) {
 }
 
 fn play_engine_turn(engine: &Bot, state: &mut [u64; 13], turn_number: &mut u8) {
-  *state = engine.get_state(*state);
+  *state = engine.get_state(*state, *turn_number);
   print_board_pieces(*state);
   println!("The engine has played.");
   println!("Move #{}", *turn_number);

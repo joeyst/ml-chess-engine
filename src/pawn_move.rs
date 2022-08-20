@@ -71,11 +71,11 @@ pub fn wpawn_one(pawns: u64, occupation: u64) -> u64 {
 }
 
 pub fn wpawn_right(pawns: u64, occupation: u64) -> u64 {
-  general_pawn_move(pawns, 9, occupation, ALL_BUT_LAST_RANK | ALL_BUT_LAST_FILE)
+  general_pawn_move(pawns, 9, occupation, ALL_BUT_LAST_RANK & ALL_BUT_LAST_FILE)
 }
 
 pub fn wpawn_left(pawns: u64, occupation: u64) -> u64 {
-  general_pawn_move(pawns, 7, occupation, ALL_BUT_LAST_RANK | ALL_BUT_FIRST_FILE)
+  general_pawn_move(pawns, 7, occupation, ALL_BUT_LAST_RANK & ALL_BUT_FIRST_FILE)
 }
 
 pub fn wpawn_two(mut pawns: u64, occupation: u64) -> u64 {
@@ -88,11 +88,11 @@ pub fn bpawn_one(pawns: u64, occupation: u64) -> u64 {
 }
 
 pub fn bpawn_right(pawns: u64, occupation: u64) -> u64 {
-  general_pawn_move(pawns, -7, occupation, ALL_BUT_FIRST_RANK | ALL_BUT_LAST_FILE)
+  general_pawn_move(pawns, -7, occupation, ALL_BUT_FIRST_RANK & ALL_BUT_LAST_FILE)
 }
 
 pub fn bpawn_left(pawns: u64, occupation: u64) -> u64 {
-  general_pawn_move(pawns, -9, occupation, ALL_BUT_FIRST_RANK | ALL_BUT_FIRST_FILE)
+  general_pawn_move(pawns, -9, occupation, ALL_BUT_FIRST_RANK & ALL_BUT_FIRST_FILE)
 }
 
 pub fn bpawn_two(mut pawns: u64, occupation: u64) -> u64 {
