@@ -47,7 +47,16 @@ pub fn make_bot(eval_function: fn([u64; 13]) -> i8, d: u8, t: u8) -> Bot {
 
 impl Bot {
   pub fn get_state(&self, state: [u64; 13]) -> [u64; 13] {
-    *states_for_turn(state, self.team).iter().max_by_key(|s| self.minimax(vec![**s], self.team, self.depth)).unwrap()
+    self.get_state_for_turn(state)
+  }
+
+  #[inline(always)]
+  pub fn get_state_for_turn(&self, state: [u64; 13]) -> [u64; 13] {
+    if self.team == 0 {
+      *states_for_turn(state, self.team).iter().min_by_key(|s| self.minimax(vec![**s], self.team, self.depth)).unwrap()
+    } else {
+      *states_for_turn(state, self.team).iter().max_by_key(|s| self.minimax(vec![**s], self.team, self.depth)).unwrap()
+    }
   }
   
   fn minimax(&self, states: Vec<[u64; 13]>, turn_number: u8, depth_left: u8) -> i8 {
