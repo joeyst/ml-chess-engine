@@ -17,7 +17,7 @@ mod crop;
 mod pawn_move;
 use crate::map::CROSS_MOVE_MAP;
 use crate::mask_for_square::for_rank;
-use crate::utility::print_board;
+use crate::utility::{print_board, print_board_pieces};
 
 #[macro_use]
 extern crate lazy_static;

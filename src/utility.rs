@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+use crate::constants::*;
+
 pub fn print_board(mut board: u64) {
   let mut horizontals: Vec<String> = Vec::new();
   let mut horizontal: String = String::from("");
@@ -17,6 +20,61 @@ pub fn print_board(mut board: u64) {
 
   for rank in 0..8 {
     println!("{}", horizontals[7 - rank]);
+  }
+  println!("\n    0 1 2 3 4 5 6 7\n\n\n")
+}
+
+fn find_occupied_slice_index(state: [u64; 13], square_index: u8) -> u8 {
+  let desired_square: u64 = 1 << square_index;
+  let mut count: u8 = 0;
+  let mut found_index: u8 = 13;
+
+  for slice_index in 0..12 {
+    if (state[slice_index as usize] & desired_square) != 0 {
+      count += 1;
+      found_index = slice_index;
+    }
+  }
+  if count > 1 {
+    println!("Uh oh, found {} pieces on same square.", count);
+  }
+  found_index
+}
+
+pub fn print_board_pieces(state: [u64; 13]) {
+  let index_to_letter: HashMap<u8, char> = HashMap::from([
+    (WPAWN, 'W'),
+    (WROOK, 'R'),
+    (WKNIGHT, 'N'),
+    (WBISHOP, 'B'),
+    (WQUEEN, 'Q'),
+    (WKING, 'K'),
+    (BPAWN, 'w'),
+    (BROOK, 'r'),
+    (BKNIGHT, 'n'),
+    (BBISHOP, 'b'),
+    (BQUEEN, 'q'),
+    (BKING, 'k'),
+    (13, ' ')
+  ]);
+
+  let mut horizontals: Vec<String> = Vec::new();
+  let mut horizontal: String = String::from("");
+  
+  for rank in 0..8 {
+    horizontal += "\n";
+    horizontal = format!("{}{}", horizontal, rank.to_string());
+    horizontal += "   ";
+    for file in 0..8 {
+      horizontal.push(*index_to_letter.get(&find_occupied_slice_index(state, (rank * 8) + file)).unwrap());
+      horizontal += " ";
+    }
+    horizontals.push(horizontal);
+    horizontal = String::from("");
+  }
+
+  for rank in 0..8 {
+    print!("{}", horizontals[7 - rank]);
   }
   println!("\n    0 1 2 3 4 5 6 7\n\n\n")
 }

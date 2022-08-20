@@ -58,14 +58,14 @@ mod test {
 
     #[test]
     fn crops_outer_edges_when_on_bottom_left_square() {
-      let value: u64 = CROSS_MOVE_MAP.lock().unwrap().get_value(1, 0x1010101010101FE);
+      let _value: u64 = CROSS_MOVE_MAP.lock().unwrap().get_value(1, 0x1010101010101FE);
       assert!(!CROSS_MOVE_MAP.lock().unwrap().map.get(&1).expect("").contains_key(&0x1010101010101FE));
       assert!(CROSS_MOVE_MAP.lock().unwrap().map.get(&1).expect("").contains_key(&0x101010101017E));
     }
 
     #[test]
     fn crops_outer_edges_when_on_middle_square() {
-      let value: u64 = CROSS_MOVE_MAP.lock().unwrap().get_value(1 << 28, EVERY_OTHER_VERTICAL_STARTING_FILE_0);
+      let _value: u64 = CROSS_MOVE_MAP.lock().unwrap().get_value(1 << 28, EVERY_OTHER_VERTICAL_STARTING_FILE_0);
       assert!(!CROSS_MOVE_MAP.lock().unwrap().map.get(&(1 << 28)).expect("").contains_key(&EVERY_OTHER_VERTICAL_STARTING_FILE_0));
       print_board(crop_board_return(EVERY_OTHER_VERTICAL_STARTING_FILE_0, 1 << 28));
       print_board(crop_board_return(EVERY_OTHER_VERTICAL_STARTING_FILE_0, 1 << 28) & cross_mask_from_bit(1 << 28));

@@ -2,7 +2,7 @@ use crate::constants::*;
 use crate::split_state::*;
 use crate::board::{get_all_occupation, get_slice_occupation, get_not_ally_occupation};
 use crate::map::{CROSS_MOVE_MAP, DIAGONAL_MOVE_MAP, L_MOVE_MAP, SQUARE_MOVE_MAP};
-use crate::print_board;
+use crate::{print_board, print_board_pieces};
 use crate::map::MoveMap;
 use std::sync::Mutex;
 use crate::pawn_move::{wpawn_all, bpawn_all};
@@ -123,9 +123,9 @@ mod test {
     #[test]
     fn finds_pawn_move_one_and_two_up_and_left_and_right() {
       let mut board: [u64; 13] = [0; 13];
-      board[WPAWN as usize] = (1 << 11);
-      board[BPAWN as usize] = (1 << 18);
-      board[BPAWN as usize] |= (1 << 20);
+      board[WPAWN as usize] = 1 << 11;
+      board[BPAWN as usize] = 1 << 18;
+      board[BPAWN as usize] |= 1 << 20;
       let states: Vec<[u64; 13]> = wpawn(board);
       assert!(states.len() == 4);
     }
@@ -133,9 +133,9 @@ mod test {
     #[test] 
     fn finds_pawn_move_one_up_and_left_and_right() {
       let mut board: [u64; 13] = [0; 13];
-      board[WPAWN as usize] = (1 << 19);
-      board[BPAWN as usize] = (1 << 26);
-      board[BPAWN as usize] |= (1 << 28);
+      board[WPAWN as usize] = 1 << 19;
+      board[BPAWN as usize] = 1 << 26;
+      board[BPAWN as usize] |= 1 << 28;
       let states: Vec<[u64; 13]> = wpawn(board);
       assert!(states.len() == 3);
     }
@@ -143,10 +143,10 @@ mod test {
     #[test]
     fn finds_pawn_move_left_and_right_and_not_up_because_blocked_by_same_team() {
       let mut board: [u64; 13] = [0; 13];
-      board[WPAWN as usize] = (1 << 11);
-      board[WKNIGHT as usize] = (1 << 19);
-      board[BPAWN as usize] = (1 << 18);
-      board[BPAWN as usize] |= (1 << 20);
+      board[WPAWN as usize] = 1 << 11;
+      board[WKNIGHT as usize] = 1 << 19;
+      board[BPAWN as usize] = 1 << 18;
+      board[BPAWN as usize] |= 1 << 20;
       let states: Vec<[u64; 13]> = wpawn(board);
       assert!(states.len() == 2);
     }
@@ -154,10 +154,10 @@ mod test {
     #[test]
     fn finds_pawn_move_left_and_right_and_not_up_because_blocked_by_different_team() {
       let mut board: [u64; 13] = [0; 13];
-      board[WPAWN as usize] = (1 << 11);
-      board[BKNIGHT as usize] = (1 << 19);
-      board[BPAWN as usize] = (1 << 18);
-      board[BPAWN as usize] |= (1 << 20);
+      board[WPAWN as usize] = 1 << 11;
+      board[BKNIGHT as usize] = 1 << 19;
+      board[BPAWN as usize] = 1 << 18;
+      board[BPAWN as usize] |= 1 << 20;
       let states: Vec<[u64; 13]> = wpawn(board);
       assert!(states.len() == 2);
     }
@@ -165,9 +165,9 @@ mod test {
     #[test] 
     fn finds_pawn_move_up_only_one_and_not_left_or_right() {
       let mut board: [u64; 13] = [0; 13];
-      board[WPAWN as usize] = (1 << 19);
-      board[WKNIGHT as usize] = (1 << 26);
-      board[WKNIGHT as usize] |= (1 << 28);
+      board[WPAWN as usize] = 1 << 19;
+      board[WKNIGHT as usize] = 1 << 26;
+      board[WKNIGHT as usize] |= 1 << 28;
       let states: Vec<[u64; 13]> = wpawn(board);
       assert!(states.len() == 1);
     }
@@ -175,7 +175,7 @@ mod test {
     #[test]
     fn finds_pawn_move_up_only_one_and_not_left_or_right_because_left_and_right_are_empty() {
       let mut board: [u64; 13] = [0; 13];
-      board[WPAWN as usize] = (1 << 19);
+      board[WPAWN as usize] = 1 << 19;
       print_board(get_all_occupation(board));
       let states: Vec<[u64; 13]> = wpawn(board);
       assert!(states.len() == 1);
