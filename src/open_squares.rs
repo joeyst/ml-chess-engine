@@ -60,5 +60,33 @@ mod test {
     assert!(L_shape(0, 1 << 63) == 0x20400000000000);
   }
 
-  
+  #[test]
+  fn finds_square_shape_from_bottom_left_of_board() {
+    assert!(square_shape(0, 1) == 0x302);
+  }
+
+  #[test]
+  fn finds_square_shape_from_bottom_middle_of_board() {
+    assert!(square_shape(0, 1 << 3) == 0x1C14);
+  }
+
+  #[test]
+  fn finds_square_shape_from_bottom_right_of_board() {
+    assert!(square_shape(0, 1 << 7) == 0xC040);
+  }
+
+  #[test]
+  fn finds_square_shape_from_top_right_of_board() {
+    assert!(square_shape(0, 1 << 63) == 0x40C0000000000000);
+  }
+
+  #[test]
+  fn finds_square_shape_from_just_left_of_top_right_of_board() {
+    assert!(square_shape(0, 1 << 62) == 0xA0E0000000000000);
+  }
+
+  #[test]
+  fn finds_square_shape_from_middle_of_board() {
+    assert!(square_shape(0, 1 << 19) == 0x1C141C00);
+  }
 }
