@@ -24,7 +24,7 @@ pub fn print_board(mut board: u64) {
   println!("\n    0 1 2 3 4 5 6 7\n\n\n")
 }
 
-fn find_occupied_slice_index(state: [u64; 13], square_index: u8) -> u8 {
+pub fn find_occupied_slice_index(state: [u64; 13], square_index: u8) -> u8 {
   let desired_square: u64 = 1 << square_index;
   let mut count: u8 = 0;
   let mut found_index: u8 = 13;
