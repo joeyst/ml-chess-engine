@@ -7,15 +7,19 @@ fn remove_square_from_board_by_index_away(mut board: [u64; 13], bit: u64, shift:
   let starting_square: u64 = two_way_shift(bit, -shift);
   let all_but_starting_square = starting_square ^ WHOLE_BOARD;
   for slice_index in 0..12 {
-    board[slice_index] = all_but_starting_square;
+    board[slice_index] &= all_but_starting_square;
   }
   board
 }
 
-fn get_updated_board_from_endings(board: [u64; 13], pawns: u64, shift: i8) -> Vec<[u64; 13]> {
+fn get_updated_board_from_endings(board: [u64; 13], pawns: u64, shift: i8, slice_index: u8) -> Vec<[u64; 13]> {
   let mut states: Vec<[u64; 13]> = Vec::new();
+  let mut temp_board: [u64; 13];
+
   for new_pawn_bit in split_slice_into_slices(pawns).iter() {
-    states.push(remove_square_from_board_by_index_away(board, *new_pawn_bit, shift));
+    temp_board = remove_square_from_board_by_index_away(board, *new_pawn_bit, shift);
+    temp_board[slice_index as usize] |= *new_pawn_bit;
+    states.push(temp_board);
   }
   states
 }
@@ -29,7 +33,7 @@ pub fn general_pawn_all(board: [u64; 13], team: u8, slice_index: u8, end_slice_f
   let all_slices_of_moves: Vec<u64> = vec![end_slice_fn[0](pawns, not_board_occ), end_slice_fn[1](pawns, not_board_occ), end_slice_fn[2](pawns, enemy_occ), end_slice_fn[3](pawns, enemy_occ)];
 
   for single_slice_of_moves in all_slices_of_moves.iter().zip(shifts.iter()) {
-    for ending in get_updated_board_from_endings(board, *single_slice_of_moves.0, *single_slice_of_moves.1).iter() {
+    for ending in get_updated_board_from_endings(board, *single_slice_of_moves.0, *single_slice_of_moves.1, slice_index).iter() {
       states.push(*ending);
     }
   }

@@ -176,6 +176,7 @@ mod test {
     fn finds_pawn_move_up_only_one_and_not_left_or_right_because_left_and_right_are_empty() {
       let mut board: [u64; 13] = [0; 13];
       board[WPAWN as usize] = (1 << 19);
+      print_board(get_all_occupation(board));
       let states: Vec<[u64; 13]> = wpawn(board);
       assert!(states.len() == 1);
     }
