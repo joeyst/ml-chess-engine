@@ -5,7 +5,7 @@ use std::sync::Mutex;
 
 lazy_static! {
   pub static ref CROSS_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::cross));
-  pub static ref DIAGONAL_MOVE_MAP: Mutex<DiagonalMoveMap> = Mutex::new(make_diagonal_move_map());
+  pub static ref DIAGONAL_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::diagonal));
 }
 
 pub struct MoveMap {
@@ -29,50 +29,6 @@ impl MoveMap {
       self.map.get_mut(&square).expect("").insert(board, (self.open_squares_function)(board, square));
     }
     *self.map.get_mut(&square).expect("").get(&board).expect("")
-  }
-}
-
-pub struct CrossMoveMap {
-  pub map: HashMap<u64, HashMap<u64, u64>>
-}
-
-impl CrossMoveMap {
-  pub fn get_value(&mut self, square: u64, board: u64) -> u64 {
-    if !self.map.contains_key(&square) {
-      self.map.insert(square, HashMap::<u64, u64>::new());
-    }
-    if !self.map.get_mut(&square).expect("").contains_key(&board) {
-      self.map.get_mut(&square).expect("").insert(board, crate::open_squares::cross(board, square));
-    }
-    *self.map.get_mut(&square).expect("").get(&board).expect("")
-  }
-}
-
-pub fn make_cross_move_map() -> CrossMoveMap {
-  CrossMoveMap {
-    map: HashMap::<u64, HashMap<u64, u64>>::new()
-  }
-}
-
-pub struct DiagonalMoveMap {
-  pub map: HashMap<u64, HashMap<u64, u64>>
-}
-
-impl DiagonalMoveMap {
-  pub fn get_value(&mut self, square: u64, board: u64) -> u64 {
-    if !self.map.contains_key(&square) {
-      self.map.insert(square, HashMap::<u64, u64>::new());
-    }
-    if !self.map.get_mut(&square).expect("").contains_key(&board) {
-      self.map.get_mut(&square).expect("").insert(board, crate::open_squares::diagonal(board, square));
-    }
-    *self.map.get_mut(&square).expect("").get(&board).expect("")
-  }
-}
-
-pub fn make_diagonal_move_map() -> DiagonalMoveMap {
-  DiagonalMoveMap {
-    map: HashMap::<u64, HashMap<u64, u64>>::new()
   }
 }
 
