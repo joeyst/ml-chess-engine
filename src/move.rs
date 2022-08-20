@@ -7,11 +7,26 @@ use crate::map::MoveMap;
 use std::sync::Mutex;
 use crate::pawn_move::{wpawn_all, bpawn_all};
 
-/*
-pub fn wstate(board: [u64; 13]) -> Vec<[u64; 13]> {
+#[inline(always)]
+fn gstate(board: [u64; 13], state_functions: Vec<fn([u64; 13]) -> Vec<[u64; 13]>>) -> Vec<[u64; 13]> {
+  let mut states: Vec<[u64; 13]> = Vec::new();
 
+  for state_function in state_functions.iter() {
+    for state in (state_function)(board).iter() {
+      states.push(*state);
+    }
+  }
+
+  states
 }
-*/
+
+pub fn wstate(board: [u64; 13]) -> Vec<[u64; 13]> {
+  gstate(board, vec![wrook, wbishop, wqueen, wpawn, wking, wknight])
+}
+
+pub fn bstate(board: [u64; 13]) -> Vec<[u64; 13]> {
+  gstate(board, vec![brook, bbishop, bqueen, bpawn, bking, bknight])
+}
 
 pub fn sliding_move_general(board: [u64; 13], slice_index: u8, map: &Mutex<MoveMap>, team: u8) -> Vec<[u64; 13]> {
   let mut possible_states: Vec<[u64; 13]> = Vec::new();

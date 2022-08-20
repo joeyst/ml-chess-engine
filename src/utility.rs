@@ -222,9 +222,9 @@ pub mod square_bounds {
                   .into_iter().reduce(|a, b| a | b).unwrap().into()
   }
 
-  pub fn find_offsets_on_board_within_distance(board: u64, square: u64, offsets: Vec<i8>, distance_limit: u8) -> u64 {
+  pub fn find_offsets_on_board_within_distance(_board: u64, square: u64, offsets: Vec<i8>, distance_limit: u8) -> u64 {
     let square_index: u8 = bit_to_index(square) - 1;
-    let mut squares: Vec<u8> = find_squares_in_list_on_board(offsets, square);
+    let squares: Vec<u8> = find_squares_in_list_on_board(offsets, square);
     let new_squares: Vec<u8> = find_squares_within_given_distance(squares.clone(), square_index, distance_limit);
     reduce_square_indices_to_slice(new_squares)
   }
