@@ -4,6 +4,10 @@ use crate::constants::FORWARD_DIAGONAL;
 use crate::constants::BACKWARD_DIAGONAL;
 use crate::safe_shift;
 
+pub fn empty_mask_from_bit(bit: u64) -> u64 {
+  0
+}
+
 pub fn cross_mask_from_bit(bit: u64) -> u64 {
   if bit == 0 {
     return 0;

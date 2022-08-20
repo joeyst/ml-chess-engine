@@ -1,7 +1,7 @@
 use crate::constants::*;
 use crate::split_state::*;
 use crate::board::{get_all_occupation, get_slice_occupation, get_not_ally_occupation};
-use crate::map::{CROSS_MOVE_MAP, DIAGONAL_MOVE_MAP};
+use crate::map::{CROSS_MOVE_MAP, DIAGONAL_MOVE_MAP, L_MOVE_MAP};
 use crate::print_board;
 use crate::map::MoveMap;
 use std::sync::Mutex;
@@ -57,6 +57,13 @@ pub fn bqueen(board: [u64; 13]) -> Vec<[u64; 13]> {
   states
 }
 
+pub fn wknight(board: [u64; 13]) -> Vec<[u64; 13]> {
+  sliding_move_general(board, WKNIGHT, &L_MOVE_MAP, WHITE_TEAM)
+}
+
+pub fn bknight(board: [u64; 13]) -> Vec<[u64; 13]> {
+  sliding_move_general(board, BKNIGHT, &L_MOVE_MAP, BLACK_TEAM)
+}
 
 #[cfg(test)]
 mod test {

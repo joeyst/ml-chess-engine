@@ -17,7 +17,7 @@ pub fn diagonal(board: u64, bit: u64) -> u64 {
   (block & diagonal_mask) ^ diagonal_mask ^ bit
 }
 
-pub fn L_shape(square: u64) -> u64 {
+pub fn L_shape(board: u64, square: u64) -> u64 {
   let square_index: u8 = bit_to_index(square) - 1;
 
   let temp_signed: i8 = square_index as i8;
@@ -84,21 +84,21 @@ mod test {
 
   #[test]
   fn finds_L_shape_from_bottom_left() {
-    assert!(L_shape(1) == 0x20400);
+    assert!(L_shape(0, 1) == 0x20400);
   }
 
   #[test]
   fn finds_L_shape_from_bottom_middle() {
-    assert!(L_shape(1 << 4) == ((1 << 10) | (1 << 14) | (1 << 19) | (1 << 21)));
+    assert!(L_shape(0, 1 << 4) == ((1 << 10) | (1 << 14) | (1 << 19) | (1 << 21)));
   }
 
   #[test] 
   fn finds_L_shape_from_middle_of_board() {
-    assert!(L_shape(1 << 20) == 0x2844004428);
+    assert!(L_shape(0, 1 << 20) == 0x2844004428);
   }
 
   #[test]
   fn finds_L_shape_from_top_right_of_board() {
-    assert!(L_shape(1 << 63) == 0x20400000000000);
+    assert!(L_shape(0, 1 << 63) == 0x20400000000000);
   }
 }

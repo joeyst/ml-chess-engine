@@ -5,11 +5,12 @@ use crate::constants::EVERY_OTHER_VERTICAL_STARTING_FILE_0;
 use std::collections::HashMap;
 use std::sync::Mutex;
 use crate::utility::print_board;
-use crate::mask_for_square::{cross_mask_from_bit, diagonal_mask_from_bit};
+use crate::mask_for_square::{cross_mask_from_bit, diagonal_mask_from_bit, empty_mask_from_bit};
 
 lazy_static! {
   pub static ref CROSS_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::cross, cross_mask_from_bit));
   pub static ref DIAGONAL_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::diagonal, diagonal_mask_from_bit));
+  pub static ref L_MOVE_MAP: Mutex<MoveMap> = Mutex::new(make_move_map(crate::open_squares::L_shape, empty_mask_from_bit));
 }
 
 pub struct MoveMap {
@@ -37,25 +38,6 @@ impl MoveMap {
       self.map.get_mut(&square).expect("").insert(board, (self.open_squares_function)(board, square));
     }
     *self.map.get_mut(&square).expect("").get(&board).expect("")
-  }
-}
-
-pub struct L_MoveMap {
-  pub map: HashMap<u64, u64>
-}
-
-pub fn make_L_move_map() -> L_MoveMap {
-  L_MoveMap {
-    map: HashMap::<u64, u64>::new()
-  }
-}
-
-impl L_MoveMap {
-  pub fn get_value(&mut self, square: u64) -> u64 {
-    if !self.map.contains_key(&square) {
-      self.map.insert(square, crate::open_squares::L_shape(square));
-    }
-    *self.map.get(&square).expect("")
   }
 }
 
