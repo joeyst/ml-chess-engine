@@ -19,10 +19,10 @@ lazy_static! {
 
     (WPAWN, 1),
     (WKNIGHT, 3),
-    (WKING, 100),
+    (WKING, 50),
     (BPAWN, -1),
     (BKNIGHT, -3),
-    (BKING, -100)
+    (BKING, -50)
   ]);
 }
 

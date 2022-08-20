@@ -76,5 +76,8 @@ fn play_player_turn(state: &mut [u64; 13], turn_number: &mut u8) {
 
 fn play_engine_turn(engine: &Bot, state: &mut [u64; 13], turn_number: &mut u8) {
   *state = engine.get_state(*state);
+  print_board_pieces(*state);
+  println!("The engine has played.");
+  println!("Move #{}", *turn_number);
   *turn_number += 1;
 }
