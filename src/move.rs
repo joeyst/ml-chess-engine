@@ -204,4 +204,20 @@ mod test {
       assert!(states.len() == 2);
     }
   }
+
+  mod all_piece_tests {
+    use super::*;
+
+    #[test]
+    fn finds_rook_and_pawn_and_knight_moves() {
+      let mut board: [u64; 13] = [0; 13];
+      board[WPAWN as usize] = 1 << 19;
+      board[WPAWN as usize] |= 1 << 20;
+      board[WKNIGHT as usize] = 1;
+      board[WROOK as usize] = 1 << 9;
+      board[WBISHOP as usize] = 1 << 22;
+      let states: Vec<[u64; 13]> = wstate(board);
+      assert!(states.len() == 27);
+    }
+  }
 }
