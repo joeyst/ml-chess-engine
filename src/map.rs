@@ -40,6 +40,25 @@ impl MoveMap {
   }
 }
 
+pub struct L_MoveMap {
+  pub map: HashMap<u64, u64>
+}
+
+pub fn make_L_move_map() -> L_MoveMap {
+  L_MoveMap {
+    map: HashMap::<u64, u64>::new()
+  }
+}
+
+impl L_MoveMap {
+  pub fn get_value(&mut self, square: u64) -> u64 {
+    if !self.map.contains_key(&square) {
+      self.map.insert(square, crate::open_squares::L_shape(square));
+    }
+    *self.map.get(&square).expect("")
+  }
+}
+
 #[cfg(test)]
 mod test {
   use super::*;
