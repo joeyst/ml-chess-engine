@@ -17,6 +17,7 @@ mod crop;
 mod pawn_move;
 mod user;
 mod game;
+mod minimax;
 
 use crate::map::CROSS_MOVE_MAP;
 use crate::mask_for_square::for_rank;
