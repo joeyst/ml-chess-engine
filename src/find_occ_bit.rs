@@ -45,15 +45,14 @@ mod test {
   use super::*;
   mod find_occ_bit_up {
     use super::*;
+    const BOARD: u64 = 0xFF000000000000;
     #[test]
     fn find_one_up() {
-      let BOARD: u64 = 0xFF000000000000;
       assert!(up(BOARD, 0x10000000000) == 0x1000000000000);
     }
 
     #[test]
     fn find_two_up() {
-      let BOARD: u64 = 0xFF000000000000;
       assert!(up(BOARD, 0x100000000) == 0x1000000000000);
     }
 

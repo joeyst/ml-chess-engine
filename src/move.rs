@@ -14,7 +14,7 @@ pub fn wrook(board: [u64; 13]) -> Vec<[u64; 13]> {
   let slice_index: u8 = WROOK;
   let mut possible_states: Vec<[u64; 13]> = Vec::new();
   let occ: u64 = get_all_occupation(board);
-  let mut open_squares: u64 = 0;
+  let mut open_squares: u64;
 
   for rook in split_slice_into_slices(get_slice_occupation(board, slice_index)).iter() {
     open_squares = CROSS_MOVE_MAP.lock().unwrap().get_value(*rook, occ);

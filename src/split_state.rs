@@ -76,7 +76,7 @@ mod test {
     fn splits_into_no_updated_states() {
       let starting_square: u64 = 0x8;
       let slice_of_splits: u64 = 0;
-      let mut board: [u64; 13] = [0; 13];
+      let board: [u64; 13] = [0; 13];
       let slice_index: u8 = 0;
       let states: Vec<[u64; 13]> = split_board_into_updated_states(starting_square, slice_of_splits, board, slice_index);
       assert!(states.len() == 0);
@@ -86,7 +86,7 @@ mod test {
     fn splits_into_one_updated_state() {
       let starting_square: u64 = 0x8;
       let slice_of_splits: u64 = 1;
-      let mut board: [u64; 13] = [0; 13];
+      let board: [u64; 13] = [0; 13];
       let slice_index: u8 = 0;
       let states: Vec<[u64; 13]> = split_board_into_updated_states(starting_square, slice_of_splits, board, slice_index);
       assert!(states.len() == 1);
@@ -96,7 +96,7 @@ mod test {
     fn splits_into_three_updated_states() {
       let starting_square: u64 = 0x8;
       let slice_of_splits: u64 = 7;
-      let mut board: [u64; 13] = [0; 13];
+      let board: [u64; 13] = [0; 13];
       let slice_index: u8 = 0;
       let states: Vec<[u64; 13]> = split_board_into_updated_states(starting_square, slice_of_splits, board, slice_index);
       assert!(states.len() == 3);
