@@ -4,6 +4,22 @@ use crate::constants::FORWARD_DIAGONAL;
 use crate::constants::BACKWARD_DIAGONAL;
 use crate::safe_shift;
 
+pub fn cross_mask_from_bit(bit: u64) -> u64 {
+  if bit == 0 {
+    return 0;
+  }
+  let square: u8 = crate::utility::bit_to_index(bit) - 1;
+  for_square(square)
+}
+
+pub fn diagonal_mask_from_bit(bit: u64) -> u64 {
+  if bit == 0 {
+    return 0;
+  }
+  let square: u8 = crate::utility::bit_to_index(bit) - 1;
+  for_square_diagonal(square)
+}
+
 pub fn for_file(file: u8) -> u64 {
   FIRST_FILE << file
 }

@@ -5,6 +5,8 @@ use crate::utility::print_board;
 
 pub fn cross(board: u64, bit: u64) -> u64 {
   let block: u64 = crate::find_block::cross(board, bit);
+  // this assumes that there is a bit on the board. If zero, underflow. Leaving unsafe because it would take
+  // overhead to make it safe. 
   let cross_mask: u64 = crate::mask_for_square::for_square(crate::utility::bit_to_index(bit) - 1);
   (block & cross_mask) ^ cross_mask ^ bit
 }
