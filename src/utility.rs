@@ -113,6 +113,47 @@ pub fn isolate_msb(board: u64) -> u64 {
   0
 }
 
+fn index_within_board(index: i8) -> bool {
+  (index >= 0) && (index <= 63)
+}
+
+pub fn find_squares_in_list_on_board(offsets: Vec<i8>, square: u64) -> Vec<u8> {
+  let index: i8 = (bit_to_index(square) - 1) as i8;
+  offsets.into_iter().filter(|x| index_within_board(x + index)).collect::<Vec<i8>>()
+         .into_iter().map(|x| (x as i8 + index) as u8).collect::<Vec<u8>>()
+}
+
+fn index_to_signed_rank(index: u8) -> i16 {
+  (index / 8) as i16
+}
+
+fn index_to_signed_file(index: u8) -> i16 {
+  (index % 8) as i16
+}
+
+fn absolute_difference_in_direction(start: u8, end: u8, direction: fn(u8) -> i16) -> u8 {
+  (direction(start) - direction(end)).abs().try_into().unwrap()
+}
+
+fn absolute_difference_in_rank(start: u8, end: u8) -> u8 {
+  absolute_difference_in_direction(start, end, index_to_signed_rank)
+}
+
+fn absolute_difference_in_file(start: u8, end: u8) -> u8 {
+  absolute_difference_in_direction(start, end, index_to_signed_file)
+}
+
+pub fn find_squares_within_given_distance(squares: Vec<u8>, square: u8, distance_limit: u8) -> Vec<u8> {
+  squares.into_iter().filter(|x| (absolute_difference_in_rank(*x, square) <= distance_limit) && 
+                                        (absolute_difference_in_file(*x, square) <= distance_limit)).collect::<Vec<u8>>()
+}
+
+pub fn reduce_square_indices_to_slice(squares: Vec<u8>) -> u64 {
+  squares.into_iter().map(|a| 1 << a).collect::<Vec<u64>>()
+                .into_iter().reduce(|a, b| a | b).unwrap().into()
+}
+
+
 #[cfg(test)]
 mod test {
   use super::*;

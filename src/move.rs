@@ -65,6 +65,8 @@ pub fn bknight(board: [u64; 13]) -> Vec<[u64; 13]> {
   sliding_move_general(board, BKNIGHT, &L_MOVE_MAP, BLACK_TEAM)
 }
 
+
+
 #[cfg(test)]
 mod test {
   use super::*;
