@@ -7,6 +7,7 @@ use crate::rand::prelude::SliceRandom;
 use crate::rand::prelude::IteratorRandom;
 use crate::utility::{greater_than, less_than, min_f, max_f, number_of_bits};
 use crate::board::*;
+use crate::{print_board, print_board_pieces};
 
 
 pub struct Bot {
@@ -45,10 +46,11 @@ pub fn basic_eval(mut state: [u64; 13]) -> f64 {
 
 pub fn center_squares_worth(mut state: [u64; 13]) -> f64 {
   let mut count: f64 = 0.0;
+  let mut temp_state = state.clone();
   for slice_index in 0..12 {
-    while state[slice_index as usize] != 0 {
+    while temp_state[slice_index as usize] != 0 {
       count += BASIC_PIECE_TO_POINT[&slice_index] as f64;
-      state[slice_index as usize] &= state[slice_index as usize] - 1;
+      temp_state[slice_index as usize] &= temp_state[slice_index as usize] - 1;
     }
   }
 
@@ -76,11 +78,11 @@ impl Bot {
   pub fn get_state(&self, state: [u64; 13], turn_number: u8) -> [u64; 13] {
     if turn_number % 2 == 0 {
       let new_state: [u64; 13] = self.get_state_black(state);
-      println!("Evaluation: {}", (self.eval_fn)(new_state));
+      println!("Evaluation: {:.32}", (self.eval_fn)(new_state));
       new_state
     } else {
       let new_state: [u64; 13] = self.get_state_white(state);
-      println!("Evaluation: {}", (self.eval_fn)(new_state));
+      println!("Evaluation: {:.32}", (self.eval_fn)(new_state));
       new_state
     }
   }
@@ -92,11 +94,12 @@ impl Bot {
     let mut candidate_state: [u64; 13] = [0; 13];
     let mut best_eval: f64 = starting_value;
     possible_states.shuffle(&mut thread_rng());
-
+    let mut evaluation: f64;
     for possible_state in possible_states.iter() {
-      if more_or_less((self.eval_fn)(*possible_state), best_eval) {
-        best_eval = self.minimax(*possible_state, turn_number + 1, 0, -10000.0, 10000.0);
+      evaluation = self.minimax(*possible_state, turn_number + 1, 0, -10000.0, 10000.0);
+      if more_or_less(evaluation, best_eval) {
         candidate_state = *possible_state;
+        best_eval = evaluation;
       }
     }
 

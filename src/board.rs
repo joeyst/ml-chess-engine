@@ -20,7 +20,7 @@ pub fn get_white_occupation(board: [u64; 13]) -> u64 {
   occ_board
 }
 
-pub fn get_black_occupation_except_king(board: [u64; 13]) -> u64 {
+pub fn get_white_occupation_except_king(board: [u64; 13]) -> u64 {
   let mut occ_board: u64 = 0;
   for slice_index in 0..5 {
     occ_board |= board[slice_index as usize];
@@ -28,7 +28,7 @@ pub fn get_black_occupation_except_king(board: [u64; 13]) -> u64 {
   occ_board
 }
 
-pub fn get_white_occupation_except_king(board: [u64; 13]) -> u64 {
+pub fn get_black_occupation_except_king(board: [u64; 13]) -> u64 {
   let mut occ_board: u64 = 0;
   for slice_index in 6..11 {
     occ_board |= board[slice_index as usize];
