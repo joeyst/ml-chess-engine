@@ -1,6 +1,17 @@
 use std::collections::HashMap;
 use crate::constants::*;
 
+pub fn number_of_bits(mut board: u64) -> u8 {
+  let mut count: u8 = 0;
+  while board != 0 {
+    if (board & 1) != 0{
+      count += 1;
+    }
+    board >>= 1;
+  }
+  count
+}
+
 pub fn print_board(mut board: u64) {
   let mut horizontals: Vec<String> = Vec::new();
   let mut horizontal: String = String::from("");
@@ -98,12 +109,28 @@ pub fn two_way_shift(board: u64, shift: i8) -> u64 {
   }
 }
 
-pub fn greater_than(first: i16, second: i16) -> bool {
+pub fn greater_than(first: f64, second: f64) -> bool {
   first > second
 }
 
-pub fn less_than(first: i16, second: i16) -> bool {
+pub fn less_than(first: f64, second: f64) -> bool {
   second > first
+}
+
+pub fn min_f(first: f64, second: f64) -> f64 {
+  if first > second {
+    second
+  } else {
+    first
+  }
+}
+
+pub fn max_f(first: f64, second: f64) -> f64 {
+  if first < second {
+    second
+  } else {
+    first
+  }
 }
 
 pub fn border_bit(bit: u64) -> bool {

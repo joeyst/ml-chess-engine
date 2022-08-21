@@ -2,7 +2,7 @@ use crate::user::get_legal_input_state;
 use crate::r#move::states_for_turn;
 use crate::constants::*;
 use crate::utility::print_board_pieces;
-use crate::bot::{make_bot, Bot, basic_eval};
+use crate::bot::{make_bot, Bot, basic_eval, center_squares_worth};
 
 pub fn two_console_game() {
   let mut state: [u64; 13] = setup_board();
@@ -27,8 +27,8 @@ pub fn two_bot_game() {
   let mut state: [u64; 13] = setup_board();
   let mut turn_number: u8 = 1;
 
-  let bot1: Bot = make_bot(basic_eval, 5);
-  let bot2: Bot = make_bot(basic_eval, 5);
+  let bot1: Bot = make_bot(basic_eval, 4);
+  let bot2: Bot = make_bot(center_squares_worth, 4);
 
   loop {
     play_engine_turn(&bot2, &mut state, &mut turn_number);
