@@ -12,37 +12,43 @@ pub struct Network {
 }
 
 impl Network {
+  fn calculate_contribution_to_error_of_layer_of_weights(&mut self, layer_of_contributors: u8, index_of_affected: u8, target: f32) -> Vec<f32> {
+    (0u8..self.get_values_of_layer(layer_of_contributors).len() as u8)
+                      .map(|index| self.calculate_contribution_to_error_of_weight(layer_of_contributors, index, index_of_affected, target))
+                      .collect::<Vec<f32>>()
+
+  }
+
+  fn calculate_contribution_to_error_of_weight(&mut self, layer_of_contributor: u8, index_of_contributor: u8, index_of_affected: u8, target: f32) -> f32 {
+    let contributor_value: f32 = self.get_layer_reference(layer_of_contributor).get_current_value_by_index(index_of_contributor);
+    let value_of_affected: f32 = self.get_layer_reference(layer_of_contributor + 1).get_current_value_by_index(index_of_affected);
+
+    self.learning_rate *
+      Self::derivative_of_ReLu_with_respect_to_weight(value_of_affected, contributor_value) * 
+      2f32 * (value_of_affected - target)
+
+  }
+
+  fn derivative_of_ReLu_with_respect_to_weight(activated_value: f32, input_value: f32) -> f32 {
+    if activated_value < 0f32 { 0f32 } else { input_value }
+  }
+
+  fn get_error_from_last_node(&self, target: f32) -> f32 {
+    let difference: f32 = self.get_value_of_final_node() - target;
+    difference * difference
+  }
+
+  pub fn run_network_with_new_input(&mut self, input: Vec<u8>) {
+    self.input_to_network = input;
+    self.set_values_for_network();
+  }
+
   pub fn get_output(&mut self) -> f32 {
     self.set_values_for_network();
     self.get_value_of_final_node()
   }
 
-  fn get_value_of_final_node(&self) -> f32 {
-    self.layers.last().unwrap().nodes[0].value
-  }
-
-  fn set_values_for_network(&mut self) {
-    for layer_index in 0u8..(self.layers.len()) as u8 {
-      self.set_values_for_layer(layer_index);
-    }
-  }
-
-  fn set_values_for_layer(&mut self, layer_index: u8) {
-    let values: Vec<f32> = self.calculate_values_for_layer(layer_index);
-    let nodes: &mut Vec<Node> = &mut self.get_layer_reference(layer_index).nodes;
-    for (node, new_value) in nodes.iter_mut().zip(values.iter()) {
-      node.value = *new_value;
-    }
-  }
-
-  fn set_values_for_layer_from_vector(&mut self, layer_index: u8, values: Vec<f32>) {
-    let nodes: &mut Vec<Node> = &mut self.get_layer_reference(layer_index).nodes;
-    for (node, new_value) in nodes.iter_mut().zip(values.iter()) {
-      node.value = *new_value;
-    }
-  }
-
-   pub fn create_random_with_input(number_of_layers: usize, nodes_per_layer: usize, a_fn: AF, l_r: f32, itn: Vec<u8>) -> Network {
+  pub fn create_random_with_input(number_of_layers: usize, nodes_per_layer: usize, a_fn: AF, l_r: f32, itn: Vec<u8>) -> Network {
     let mut layers: ListOfLayers = vec![Layer::create_value_zero_random(nodes_per_layer, 0, a_fn); number_of_layers];
     let first_layer: Layer = Layer::create_value_zero_random(nodes_per_layer, 768, a_fn);
     layers[0] = first_layer;
@@ -71,6 +77,38 @@ impl Network {
       layers: layers,
       learning_rate: l_r,
       input_to_network: vec![0; 768]
+    }
+  }
+
+
+
+
+
+
+
+
+  fn get_value_of_final_node(&self) -> f32 {
+    self.layers.last().unwrap().nodes[0].value
+  }
+
+  fn set_values_for_network(&mut self) {
+    for layer_index in 0u8..(self.layers.len()) as u8 {
+      self.set_values_for_layer(layer_index);
+    }
+  }
+
+  fn set_values_for_layer(&mut self, layer_index: u8) {
+    let values: Vec<f32> = self.calculate_values_for_layer(layer_index);
+    let nodes: &mut Vec<Node> = &mut self.get_layer_reference(layer_index).nodes;
+    for (node, new_value) in nodes.iter_mut().zip(values.iter()) {
+      node.value = *new_value;
+    }
+  }
+
+  fn set_values_for_layer_from_vector(&mut self, layer_index: u8, values: Vec<f32>) {
+    let nodes: &mut Vec<Node> = &mut self.get_layer_reference(layer_index).nodes;
+    for (node, new_value) in nodes.iter_mut().zip(values.iter()) {
+      node.value = *new_value;
     }
   }
 
@@ -112,6 +150,10 @@ impl Network {
   }
 
   fn get_values_of_old_layer(&self, layer_index: u8) -> Vec<f32> {
+    self.layers[(layer_index - 1) as usize].collect_values()
+  }
+
+  fn get_values_of_layer(&self, layer_index: u8) -> Vec<f32> {
     self.layers[layer_index as usize].collect_values()
   }
 
