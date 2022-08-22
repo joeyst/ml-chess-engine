@@ -29,42 +29,26 @@ lazy_static! {
     (WKING, 50),
     (BPAWN, -1),
     (BKNIGHT, -3),
-    (BKING, -50)
+    (BKING, -50),
+    (12, 0)
   ]);
 }
 
-pub fn basic_eval(mut state: [u64; 13]) -> f64 {
-  let mut count: f64 = 0.0;
-  for slice_index in 0..12 {
-    while state[slice_index as usize] != 0 {
-      count += BASIC_PIECE_TO_POINT[&slice_index] as f64;
-      state[slice_index as usize] &= state[slice_index as usize] - 1;
-    }
-  }
-  count
+#[inline]
+fn collect_points(state: [u64; 13]) -> f64 {
+  state.iter().enumerate().map(|(index, slice)| BASIC_PIECE_TO_POINT[&(index as u8)] as f64 * number_of_bits(*slice) as f64).sum::<f64>()
 }
 
-pub fn center_squares_worth(mut state: [u64; 13]) -> f64 {
-  let mut count: f64 = 0.0;
-  let mut temp_state = state.clone();
-  for slice_index in 0..12 {
-    while temp_state[slice_index as usize] != 0 {
-      count += BASIC_PIECE_TO_POINT[&slice_index] as f64;
-      temp_state[slice_index as usize] &= temp_state[slice_index as usize] - 1;
-    }
-  }
+pub fn basic_eval(state: [u64; 13]) -> f64 {
+  collect_points(state)
+}
 
-  let b_center_occ: u64 = get_black_occupation_except_king(state) & CENTER_FOUR_SQUARES;
-  let w_center_occ: u64 = get_white_occupation_except_king(state) & CENTER_FOUR_SQUARES;
-  let b_second_center_occ: u64 = get_black_occupation_except_king(state) & SECOND_CENTER_SQUARES;
-  let w_second_center_occ: u64 = get_white_occupation_except_king(state) & SECOND_CENTER_SQUARES;
-
-  count += number_of_bits(b_center_occ) as f64 * -0.5;
-  count += number_of_bits(w_center_occ) as f64 * 0.5;
-  count += number_of_bits(b_second_center_occ) as f64 * -0.2;
-  count += number_of_bits(w_second_center_occ) as f64 * 0.2;
-  
-  count
+pub fn center_squares_worth(state: [u64; 13]) -> f64 {
+  let occ_fns: Vec<fn([u64; 13]) -> u64> = vec![get_black_occupation_except_king, get_white_occupation_except_king, get_black_occupation_except_king, get_white_occupation_except_king];
+  let squares: Vec<u64> = vec![CENTER_FOUR_SQUARES, CENTER_FOUR_SQUARES, SECOND_CENTER_SQUARES, SECOND_CENTER_SQUARES];
+  let weights: Vec<f64> = vec![-0.5, 0.5, -0.2, 0.2];
+  let center_squares_value: f64 = occ_fns.iter().zip(squares.iter()).zip(weights.iter()).map(|((occ, sqr), w)| (number_of_bits(occ(state) & sqr)) as f64 * w).sum::<f64>();
+  collect_points(state) + center_squares_value
 }
 
 pub fn make_bot(eval_function: fn([u64; 13]) -> f64, d: u8) -> Bot {
@@ -118,7 +102,7 @@ impl Bot {
     if depth_gone == self.depth {
       return (self.eval_fn)(state)
     }
-    let mut possible_states: Vec<[u64; 13]> = states_for_turn(state, turn_number);
+    let possible_states: Vec<[u64; 13]> = states_for_turn(state, turn_number);
 
     if turn_number % 2 == 1 {
       let mut max: f64 = -10000.0;
