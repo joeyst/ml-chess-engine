@@ -33,5 +33,5 @@ use crate::game::{two_console_game, one_bot_game, two_bot_game};
 extern crate lazy_static;
 
 fn main() {
-  two_bot_game();
+  //two_bot_game();
 }

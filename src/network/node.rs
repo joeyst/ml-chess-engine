@@ -4,7 +4,7 @@ use rand::Rng;
 pub struct Node {
   pub value: f32,
   pub bias: f32,
-  // weights -> **next** layer
+  // weights -> **previous** layer
   pub weights: Vec<f32>
 }
 
@@ -17,11 +17,11 @@ impl Node {
     }
   }
 
-  pub fn create_random(length_of_next_layer: usize) -> Node {
+  pub fn create_random(length_of_previous_layer: usize) -> Node {
     Node {
       value: 0f32, 
       bias: rand::thread_rng().gen_range(-1.0..1.0), 
-      weights: vec![rand::thread_rng().gen_range(-1.0..1.0); length_of_next_layer]
+      weights: vec![rand::thread_rng().gen_range(-1.0..1.0); length_of_previous_layer]
     }
   }
 
