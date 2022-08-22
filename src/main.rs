@@ -1,5 +1,7 @@
 #![cfg_attr(debug_assertions, allow(dead_code, unused_imports, non_snake_case))]
 
+mod network;
+
 mod mask_for_square;
 mod constants;
 mod safe_shift;
