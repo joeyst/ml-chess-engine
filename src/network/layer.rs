@@ -5,6 +5,7 @@ type ListOfNodes = Vec<Node>;
 type BiasesForWholeLayer = Vec<f32>;
 type WeightsForWholeLayer = Vec<Vec<f32>>;
 
+#[derive(Clone)]
 pub struct Layer {
   nodes: Vec<Node>,
   activation_fn: AF
@@ -18,7 +19,8 @@ impl Layer {
     }
   }
 
-  pub fn create_random_layer(nodes_in_layer: usize, nodes_in_previous_layer: usize, a_fn: AF) -> Layer {
+  // value = 0, bias = random of -1.0..1.0, weight in weights = random of -1.0..1.0
+  pub fn create_value_zero_random(nodes_in_layer: usize, nodes_in_previous_layer: usize, a_fn: AF) -> Layer {
     Layer::create(vec![Node::create_random(nodes_in_previous_layer); nodes_in_layer], a_fn)
   }
 
