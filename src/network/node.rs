@@ -5,7 +5,8 @@ pub struct Node {
   pub value: f32,
   pub bias: f32,
   // weights -> **previous** layer
-  pub weights: Vec<f32>
+  pub weights: Vec<f32>,
+  pub effect: f32
 }
 
 impl Node {
@@ -13,7 +14,8 @@ impl Node {
     Node {
       value: v, 
       bias: b, 
-      weights: w
+      weights: w,
+      effect: 0f32
     }
   }
 
@@ -29,7 +31,8 @@ impl Node {
     Node {
       value: 0f32, 
       bias: bias_val, 
-      weights: weight_values
+      weights: weight_values,
+      effect: 0f32
     }
   }
 

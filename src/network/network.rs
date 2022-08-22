@@ -12,6 +12,26 @@ pub struct Network {
 }
 
 impl Network {
+
+  fn set_effects_for_all_layers(&mut self) {
+    
+  }
+
+  fn set_effects_of_layer(&mut self, index: u8) {
+    let effects: Vec<f32> = self.calculate_effect_of_layer(index);
+    self.set_effects_for_layer_from_vector(index, effects);
+  }
+
+  fn calculate_effect_of_layer(&mut self, index: u8) -> Vec<f32> {
+    let mut effects: Vec<f32> = Vec::new();
+    for (index, value) in self.get_values_of_layer(index).iter().enumerate() {
+      for effect in self.get_layer((index + 1) as u8).collect_effects().iter() {
+        effects[index] += Self::d_of_ReLu_respect_to_weight(*value) * effect;
+      }
+    }
+    effects
+  }
+
   fn calculate_contribution_to_error_of_layer_of_weights(&mut self, layer_of_contributors: u8, index_of_affected: u8, target: f32) -> Vec<f32> {
     (0u8..self.get_values_of_layer(layer_of_contributors).len() as u8)
                       .map(|index| self.calculate_contribution_to_error_of_weight(layer_of_contributors, index, index_of_affected, target))
@@ -24,13 +44,27 @@ impl Network {
     let value_of_affected: f32 = self.get_layer_reference(layer_of_contributor + 1).get_current_value_by_index(index_of_affected);
 
     self.learning_rate *
-      Self::derivative_of_ReLu_with_respect_to_weight(value_of_affected, contributor_value) * 
+      Self::derivative_of_ReLu_with_respect_to_weight_index_included(value_of_affected, contributor_value) * 
       2f32 * (value_of_affected - target)
 
   }
 
-  fn derivative_of_ReLu_with_respect_to_weight(activated_value: f32, input_value: f32) -> f32 {
+  fn d_of_ReLu_respect_to_weight(activated_value: f32) -> f32 {
+    if activated_value < 0f32 { 0f32 } else { 1f32 }
+  }
+
+  fn derivative_of_ReLu_with_respect_to_weight_index_included(activated_value: f32, input_value: f32) -> f32 {
     if activated_value < 0f32 { 0f32 } else { input_value }
+  }
+
+  fn set_effect_on_cost_for_last_node(&mut self, target: f32) {
+    let number_of_layers: u8 = self.layers.len().try_into().unwrap();
+    self.get_layer_reference(number_of_layers).nodes[0].effect = self.get_effect_on_cost_from_last_node(target);
+  }
+
+  fn get_effect_on_cost_from_last_node(&self, target: f32) -> f32 {
+    let effect: f32 = -2f32 * (self.get_value_of_final_node() - target);
+    if effect > 0f32 { effect } else { 0f32 }
   }
 
   fn get_error_from_last_node(&self, target: f32) -> f32 {
@@ -109,6 +143,13 @@ impl Network {
     let nodes: &mut Vec<Node> = &mut self.get_layer_reference(layer_index).nodes;
     for (node, new_value) in nodes.iter_mut().zip(values.iter()) {
       node.value = *new_value;
+    }
+  }
+
+  fn set_effects_for_layer_from_vector(&mut self, layer_index: u8, values: Vec<f32>) {
+    let nodes: &mut Vec<Node> = &mut self.get_layer_reference(layer_index).nodes;
+    for (node, new_value) in nodes.iter_mut().zip(values.iter()) {
+      node.effect = *new_value;
     }
   }
 

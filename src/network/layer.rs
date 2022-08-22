@@ -51,6 +51,10 @@ impl Layer {
     &mut self.nodes
   }
 
+  pub fn collect_effects(&self) -> Vec<f32> {
+    self.nodes.iter().map(|node| node.effect).collect::<Vec<f32>>()
+  }
+
   // singular
   pub fn get_current_value_by_index(&self, node_index: u8) -> f32 {
     self.nodes[node_index as usize].value
