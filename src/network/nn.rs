@@ -6,10 +6,42 @@ pub struct NN {
   pub weights: Vec<Vec<Vec<f32>>>,
   pub act_fn: fn(f32) -> f32,
   pub der_fn: fn(f32) -> f32,
-  pub influence: Vec<Vec<f32>>
+  pub influence: Vec<Vec<f32>>,
+  pub learning_rate: f32
 }
 
 impl NN {
+  pub fn backprop(&mut self, target: f32) {
+    self.set_all_layer_influences(target);
+    self.adjust_all_weights();
+  }
+
+  fn adjust_all_weights(&mut self) {
+    (0u16..).for_each(|index| self.adjust_weights_in_layer(index));
+  }
+
+  fn adjust_weights_in_layer(&mut self, layer_index: u16) {
+    let influences: Vec<f32> = self.influence[(layer_index + 1) as usize].clone();
+    let vals: Vec<f32> = self.values[layer_index as usize].clone();
+    let lr: f32 = self.learning_rate.clone();
+
+    for (val, val_index) in vals.iter().zip(0..) {
+      for (inf, influence_index) in influences.iter().zip(0..) {
+        self.weights[layer_index as usize][val_index as usize][influence_index as usize] += lr * val * inf;
+      }
+    }
+  }
+
+  fn set_all_layer_influences(&mut self, target: f32) {
+    self.set_starting_influence(target);
+    (0u16..(self.values.len()-1) as u16).rev().for_each(|index| self.set_layer_influence(index));
+  }
+
+  fn set_layer_influence(&mut self, layer_index: u16) {
+    let influences = self.get_layer_influence(layer_index);
+    self.influence[layer_index as usize].iter_mut().zip(influences).for_each(|(old, new)| *old = new);
+  }
+
   fn get_layer_influence(&self, layer_index: u16) -> Vec<f32> {
     let mut influences: Vec<f32> = vec![0f32; self.values[layer_index as usize].len()];
     let mut val_from_der_fn: f32;

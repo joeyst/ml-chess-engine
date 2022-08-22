@@ -1,12 +1,12 @@
 use super::nn::NN;
 
 impl NN {
-  pub fn get_value_from_input(&mut self, input: Vec<f32>) -> f32 {
+  pub fn forwardprop(&mut self, input: Vec<f32>) -> f32 {
     self.set_all_layers_from_input(input);
     self.get_final_value()
   }
 
-  pub fn create(nodes: u16, layers: u16, a_fn: fn(f32) -> f32, d_fn: fn(f32) -> f32) -> NN {
+  pub fn create(nodes: u16, layers: u16, a_fn: fn(f32) -> f32, d_fn: fn(f32) -> f32, l_r: f32) -> NN {
     let mut first_weights = vec![vec![vec![0f32; 768]; nodes as usize]; 1];
     let mut rest_of_weights = vec![vec![vec![0f32; nodes as usize]; nodes as usize]; layers as usize];
     first_weights.append(&mut rest_of_weights);
@@ -20,7 +20,8 @@ impl NN {
       weights: first_weights,
       act_fn: a_fn,
       der_fn: d_fn,
-      influence: infl
+      influence: infl,
+      learning_rate: l_r
     }
   }
 
