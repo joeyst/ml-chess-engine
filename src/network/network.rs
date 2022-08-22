@@ -7,12 +7,19 @@ type ListOfLayers = Vec<Layer>;
 
 pub struct Network {
   pub layers: ListOfLayers,
-  pub learning_rate: f32
+  pub learning_rate: f32,
+  pub input_to_network: Vec<u8>
 }
 
 impl Network {
+  fn set_values_for_network(&mut self) {
+    for layer_index in 0u8..(self.layers.len()) as u8 {
+      self.set_values_for_layer(layer_index);
+    }
+  }
+
   fn set_values_for_layer(&mut self, layer_index: u8) {
-    let values: Vec<f32> = self.calculate_value_for_layer(layer_index);
+    let values: Vec<f32> = self.calculate_values_for_layer(layer_index);
     let nodes: &mut Vec<Node> = &mut self.get_layer_reference(layer_index).nodes;
     for (node, new_value) in nodes.iter_mut().zip(values.iter()) {
       node.value = *new_value;
@@ -26,6 +33,21 @@ impl Network {
     }
   }
 
+   pub fn create_random_with_input(number_of_layers: usize, nodes_per_layer: usize, a_fn: AF, l_r: f32, itn: Vec<u8>) -> Network {
+    let mut layers: ListOfLayers = vec![Layer::create_value_zero_random(nodes_per_layer, 0, a_fn); number_of_layers];
+    let first_layer: Layer = Layer::create_value_zero_random(nodes_per_layer, 768, a_fn);
+    layers[0] = first_layer;
+    for layer_number in 1..number_of_layers {
+      layers[layer_number] = Layer::create_value_zero_random(nodes_per_layer, nodes_per_layer, a_fn);
+    }
+
+    Network {
+      layers: layers,
+      learning_rate: l_r,
+      input_to_network: itn
+    }
+  }
+
   pub fn create_random(number_of_layers: usize, nodes_per_layer: usize, a_fn: AF, l_r: f32) -> Network {
     let mut layers: ListOfLayers = vec![Layer::create_value_zero_random(nodes_per_layer, 0, a_fn); number_of_layers];
     let first_layer: Layer = Layer::create_value_zero_random(nodes_per_layer, 768, a_fn);
@@ -36,21 +58,30 @@ impl Network {
 
     Network {
       layers: layers,
-      learning_rate: l_r
+      learning_rate: l_r,
+      input_to_network: vec![0; 768]
     }
   }
 
-  fn calculate_value_for_layer(&self, layer_index: u8) -> Vec<f32> {
+  fn calculate_values_for_layer(&self, layer_index: u8) -> Vec<f32> {
     (0u8..self.get_layer_nodes(layer_index).len() as u8)
                       .map(|node_index| self.calculate_value_for_node(layer_index, node_index))
                       .collect::<Vec<f32>>()
   }
 
-  fn calculate_value_for_node(&self, layer_index: u8, node_index: u8) -> f32 {
-    assert!(layer_index >= 1);
+  
 
+  fn calculate_value_for_node(&self, layer_index: u8, node_index: u8) -> f32 {
+    match layer_index {
+      0 => self.calculate_value_for_node_of_first_layer(layer_index, node_index),
+      _ => self.calculate_value_for_node_beyond_first_layer(layer_index, node_index)
+    }
+  }
+
+  #[inline]
+  fn calculate_value_for_node_of_layer_general(&self, layer_index: u8, node_index: u8, inputs: Vec<f32>) -> f32 {
     let sum: f64 = self.get_weights_of_node(layer_index, node_index).iter()
-                      .zip(self.get_values_of_old_layer(layer_index))
+                      .zip(inputs)
                       .map(|(w, v)| (*w as f64) * (v as f64))
                       .sum();
     
@@ -58,7 +89,15 @@ impl Network {
     let activation_function: AF = self.get_activation_function(layer_index);
 
     (activation_function)(sum + bias)
+  }
 
+  fn calculate_value_for_node_beyond_first_layer(&self, layer_index: u8, node_index: u8) -> f32 {
+    self.calculate_value_for_node_of_layer_general(layer_index, node_index, self.get_values_of_old_layer(layer_index))
+  }
+
+  fn calculate_value_for_node_of_first_layer(&self, layer_index: u8, node_index: u8) -> f32 {
+    let input: Vec<f32> = self.get_input_to_network().into_iter().map(|val| val as f32).collect::<Vec<f32>>();
+    self.calculate_value_for_node_of_layer_general(layer_index, node_index, input)
   }
 
   fn get_values_of_old_layer(&self, layer_index: u8) -> Vec<f32> {
@@ -90,6 +129,11 @@ impl Network {
   #[inline(always)]
   fn get_layer_nodes(&self, layer_index: u8) -> Vec<Node> {
     self.get_layer(layer_index).nodes
+  }
+
+  #[inline(always)]
+  fn get_input_to_network(&self) -> Vec<u8> {
+    self.input_to_network.clone()
   }
 }
 
