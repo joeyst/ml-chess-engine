@@ -12,7 +12,14 @@ pub struct Network {
 }
 
 impl Network {
-  
+  pub fn get_output(&mut self) -> f32 {
+    self.set_values_for_network();
+    self.get_value_of_final_node()
+  }
+
+  fn get_value_of_final_node(&self) -> f32 {
+    self.layers.last().unwrap().nodes[0].value
+  }
 
   fn set_values_for_network(&mut self) {
     for layer_index in 0u8..(self.layers.len()) as u8 {
