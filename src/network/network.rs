@@ -12,6 +12,8 @@ pub struct Network {
 }
 
 impl Network {
+  
+
   fn set_values_for_network(&mut self) {
     for layer_index in 0u8..(self.layers.len()) as u8 {
       self.set_values_for_layer(layer_index);
@@ -40,6 +42,7 @@ impl Network {
     for layer_number in 1..number_of_layers {
       layers[layer_number] = Layer::create_value_zero_random(nodes_per_layer, nodes_per_layer, a_fn);
     }
+    layers.append(&mut vec![Layer::create_value_zero_random(1, nodes_per_layer, a_fn)]);
 
     Network {
       layers: layers,
@@ -55,6 +58,7 @@ impl Network {
     for layer_number in 1..number_of_layers {
       layers[layer_number] = Layer::create_value_zero_random(nodes_per_layer, nodes_per_layer, a_fn);
     }
+    layers.append(&mut vec![Layer::create_value_zero_random(1, nodes_per_layer, a_fn)]);
 
     Network {
       layers: layers,
@@ -189,5 +193,11 @@ mod test {
       assert_ne!(weights1, weights2);
       assert_ne!(weights2, weights3);
     }
+  }
+
+  #[test]
+  fn ends_with_layer_of_single_node() {
+    let network: Network = Network::create_random(1, 10, relu, 1f32);
+    assert_eq!(network.layers.last().unwrap().nodes.len(), 1);
   }
 }
