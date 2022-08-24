@@ -1,4 +1,5 @@
 use super::nn::NN;
+use crate::rand::Rng;
 
 impl NN {
   pub fn forwardprop(&mut self, input: Vec<f32>) -> f32 {
@@ -7,10 +8,11 @@ impl NN {
   }
 
   pub fn create(nodes: u16, layers: u16, a_fn: fn(f32) -> f32, d_fn: fn(f32) -> f32, l_r: f32) -> NN {
-    let mut first_weights = vec![vec![vec![0f32; 768]; nodes as usize]; 1];
+    let mut first_weights = vec![vec![vec![0f32; (768 * nodes) as usize]; nodes as usize]; 1];
     let mut rest_of_weights = vec![vec![vec![0f32; nodes as usize]; nodes as usize]; layers as usize];
     first_weights.append(&mut rest_of_weights);
     first_weights[layers as usize] = vec![vec![0f32; 1]; nodes as usize]; 
+    first_weights.append(&mut vec![vec![vec![0f32; 1]]]);
     let mut infl = vec![vec![0f32; nodes as usize]; layers as usize];
     infl.append(&mut vec![vec![0f32; 1]; 1]);
     
@@ -25,9 +27,28 @@ impl NN {
     }
   }
 
-  fn set_all_layers_from_input(&mut self, input: Vec<f32>) {
+  pub fn create_random_wb(nodes: u16, layers: u16, a_fn: fn(f32) -> f32, d_fn: fn(f32) -> f32, l_r: f32) -> NN {
+    let mut nn: NN = NN::create(nodes, layers, a_fn, d_fn, l_r);
+    let mut rng = rand::thread_rng();
+    for layer in &mut nn.weights {
+      for node in layer {
+        for weight in node {
+          *weight = rng.gen_range(-1.0..1.0);
+        }
+      }
+    }
+    for layer in &mut nn.biases {
+      for node in layer {
+        *node = rng.gen_range(-1.0..1.0);
+      }
+    }
+    nn
+  }
+
+  pub fn set_all_layers_from_input(&mut self, input: Vec<f32>) {
     self.set_zeroth_layer_from_input(input);
     self.set_all_layers_but_zeroth();
+    self.set_last_layer()
   }
 
   pub fn get_final_value(&self) -> f32 {
@@ -55,7 +76,8 @@ impl NN {
   }
 
   fn set_layer_sum(&mut self, layer_index: u16) {
-    let node_values = (1..).map(|index| self.get_node_sum(layer_index, index))
+    let length = self.values[layer_index as usize].len();
+    let node_values = (1u16..length as u16).map(|index| self.get_node_sum(layer_index, index))
                            .collect::<Vec<f32>>();
     self.vals_mut(layer_index).zip(node_values)
                               .for_each(|(old, new)| *old = new);
@@ -78,12 +100,27 @@ impl NN {
                               .for_each(|(old, new)| *old = new);
   }
 
-  fn set_all_layers_but_zeroth(&mut self) {
-    (1..).for_each(|index| self.set_layer_val(index));
+  fn set_last_layer(&mut self) {
+    let max_index = self.values.len() - 1;
+    let values_of_previous_layer = self.values[max_index - 1].clone();
+    let weights = self.weights[max_index].clone();
+
+    for (value, node_index) in self.values[max_index].iter_mut().zip(0..) {
+      *value = weights[node_index as usize].clone().iter()
+                                         .zip(values_of_previous_layer.clone())
+                                         .map(|(w, v)| w * v)
+                                         .sum::<f32>();
+    }
   }
 
-  fn set_zeroth_layer_from_input(&mut self, input: Vec<f32>) {
-    let values = (0..).map(|index| self.get_node_sum_from_input(index, input.clone())).collect::<Vec<f32>>();
+  fn set_all_layers_but_zeroth(&mut self) {
+    let length = self.values.len();
+    (1u16..((length - 1) as u16)).for_each(|index| self.set_layer_val(index));
+  }
+
+  pub fn set_zeroth_layer_from_input(&mut self, input: Vec<f32>) {
+    let length: u16 = self.values[0 as usize].len() as u16;
+    let values = (0u16..length).map(|index| self.get_node_sum_from_input(index, input.clone())).collect::<Vec<f32>>();
     self.values[0].iter_mut()
                   .zip(values)
                   .for_each(|(old, new)| *old = (self.act_fn)(new));
