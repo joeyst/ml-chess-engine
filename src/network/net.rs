@@ -75,7 +75,7 @@ impl Net {
     }
   }
 
-  fn create_random(input_values: Vec<f64>, layers: usize, nodes: usize, activation_fn: fn(f64) -> f64, derivative: fn(f64) -> f64, l_r: f64) -> Net {
+  pub fn create_random(input_values: Vec<f64>, layers: usize, nodes: usize, activation_fn: fn(f64) -> f64, derivative: fn(f64) -> f64, l_r: f64) -> Net {
     let net = &mut Net::create(input_values, layers, nodes, activation_fn, derivative, l_r);
     let mut rng = rand::thread_rng();
     for layer in net.weights.iter_mut() {
@@ -94,11 +94,11 @@ impl Net {
   }
 
   #[inline]
-  fn get_final_value(&self) -> f64 {
+  pub fn get_final_value(&self) -> f64 {
     self.values[self.values.len() - 1][0]
   }
 
-  fn set_network_values(&mut self) {
+  pub fn set_network_values(&mut self) {
     let network_length = self.values.len();
     for layer_index in 1..network_length {
       self.set_layer_values(layer_index);
@@ -169,6 +169,26 @@ impl Net {
   }
 }
 
+pub fn tanh(input: f64) -> f64 {
+  ((E.powf(input)) - E.powf(-input)) /
+  ((E.powf(input)) + E.powf(-input))
+}
+
+pub fn tanh_der(input: f64) -> f64 {
+  2f64 / (E.powf(input) + E.powf(-input))
+}
+
+pub fn tanh_der_clipped(input: f64) -> f64 {
+  let val = tanh_der(input);
+  if val.abs() < 0.5f64 {
+    val
+  } else if val >= 0.5f64 {
+    0.5f64
+  } else {
+    -0.5f64
+  }
+}
+
 #[cfg(test)]
 mod test {
   use super::*;
@@ -198,32 +218,12 @@ mod test {
     1f64
   }
 
-  fn tanh(input: f64) -> f64 {
-    ((E.powf(input)) - E.powf(-input)) /
-    ((E.powf(input)) + E.powf(-input))
-  }
-
-  fn tanh_der(input: f64) -> f64 {
-    2f64 / (E.powf(input) + E.powf(-input))
-  }
-
-  fn tanh_der_clipped(input: f64) -> f64 {
-    let val = tanh_der(input);
-    if val.abs() < 0.5f64 {
-      val
-    } else if val >= 0.5f64 {
-      0.5f64
-    } else {
-      -0.5f64
-    }
-  }
-
   lazy_static! {
     static ref NN: Net = Net::create(vec![1f64; 2], 3, 6, leaky_ReLu, leaky_ReLu_der, 0.05);
     static ref NN_MUT: Mutex<Net> = Mutex::new(Net::create(vec![1f64; 2], 3, 6, leaky_ReLu, leaky_ReLu_der, 0.05));
-    // for NN_RAND, tanh, tanh_der_clipped, 0.02 learning rate, it seems like 
+    // for NN_RAND, tanh, tanh_der, 0.02 learning rate, it seems like 
     // 40 layers and 15 nodes per layer is the sweet spot
-    static ref NN_RAND: Mutex<Net> = Mutex::new(Net::create_random(vec![1f64; 2], 40, 20, tanh, tanh_der_clipped, 0.02));
+    static ref NN_RAND: Mutex<Net> = Mutex::new(Net::create_random(vec![1f64; 2], 80, 20, tanh, tanh_der_clipped, 0.02));
   }
 
   #[test]
@@ -399,7 +399,11 @@ mod test {
       if new.get_final_value().is_nan() {
         panic!("Network exploded! net.rs, fn correctly_adjusts_weights()")
       }
-      assert!(absolute_difference(new.get_final_value(), val) < 0.001);
+      if absolute_difference(new.get_final_value(), val) > 0.001 {
+        println!("Inaccurate value: {:?}", new.get_final_value());
+        println!("Desired value:    {:?}", val);
+        panic!("");
+      }
       msg_string = format!("{:?}: ", val);
       msg = &msg_string;
       print_final_value(new.get_final_value(), msg);
