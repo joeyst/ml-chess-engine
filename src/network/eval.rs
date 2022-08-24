@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use crate::rand::Rng;
 
 lazy_static! {
-  static ref NET: Mutex<Net> = Mutex::new(Net::create_random(vec![1f64; 768], 80, 20, tanh, tanh_der_clipped, 0.02));
+  pub static ref NET: Mutex<Net> = Mutex::new(Net::create_random(vec![1f64; 768], 80, 20, tanh, tanh_der_clipped, 0.02));
 }
 
 pub fn run_random_inputs_through_net(number: usize) {
