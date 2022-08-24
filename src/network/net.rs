@@ -2,7 +2,7 @@ use crate::rand::Rng;
 use std::f64::consts::E;
 type LayerNodeMatrix = Vec<Vec<f64>>;
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Debug)]
 pub struct Net {
   pub values: LayerNodeMatrix,
   pub biases: LayerNodeMatrix,
@@ -86,6 +86,11 @@ impl Net {
       }
     }
     net.clone()
+  }
+
+  pub fn forward_prop_to_value(&mut self, input_values: Vec<f64>) -> f64 {
+    self.forward_prop(input_values);
+    self.get_final_value()
   }
 
   #[inline]

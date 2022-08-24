@@ -2,7 +2,13 @@ use crate::user::get_legal_input_state;
 use crate::r#move::states_for_turn;
 use crate::constants::*;
 use crate::utility::print_board_pieces;
-use crate::bot::{make_bot, Bot, basic_eval, center_squares_worth};
+use crate::bot::{make_bot, Bot, basic_eval, center_squares_worth, random_eval};
+use crate::network::train::learn_bot_eval;
+
+lazy_static! {
+  pub static ref RANDOM_BOT: Bot = make_bot(random_eval, 0);
+  pub static ref LEARN_BOT: Bot = make_bot(learn_bot_eval, 3);
+}
 
 pub fn two_console_game() {
   let mut state: [u64; 13] = setup_board();
@@ -23,6 +29,20 @@ pub fn one_bot_game() {
   }
 }
 
+pub fn two_bot_game_learn_bot() {
+  let mut state: [u64; 13] = setup_board();
+  let mut turn_number: u8 = 1;
+
+  let bot1: Bot = make_bot(learn_bot_eval, 0);
+  let bot2: Bot = make_bot(learn_bot_eval, 0);
+
+  loop {
+    println!("Gotten here.");
+    play_engine_turn(&bot2, &mut state, &mut turn_number);
+    play_engine_turn(&bot1, &mut state, &mut turn_number);
+  }
+}
+
 pub fn two_bot_game() {
   let mut state: [u64; 13] = setup_board();
   let mut turn_number: u8 = 1;
@@ -36,7 +56,7 @@ pub fn two_bot_game() {
   }
 }
 
-fn setup_board() -> [u64; 13] {
+pub fn setup_board() -> [u64; 13] {
   let mut state: [u64; 13] = [0; 13];
   state[WPAWN as usize] = STARTING_WPAWNS;
   state[BPAWN as usize] = STARTING_BPAWNS;
@@ -74,10 +94,16 @@ fn play_player_turn(state: &mut [u64; 13], turn_number: &mut u8) {
   *turn_number += 1;
 }
 
-fn play_engine_turn(engine: &Bot, state: &mut [u64; 13], turn_number: &mut u8) {
+pub fn play_engine_turn(engine: &Bot, state: &mut [u64; 13], turn_number: &mut u8) {
   *state = engine.get_state(*state, *turn_number);
   print_board_pieces(*state);
   println!("The engine has played.");
   println!("Move #{}", *turn_number);
+  *turn_number += 1;
+}
+
+
+pub fn play_engine_turn_quiet(engine: &Bot, state: &mut [u64; 13], turn_number: &mut u8) {
+  *state = engine.get_state_quiet(*state, *turn_number);
   *turn_number += 1;
 }

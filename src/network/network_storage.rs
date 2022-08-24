@@ -6,10 +6,11 @@ use super::eval::NET;
 use std::io::{Error, SeekFrom};
 use std::collections::HashMap;
 
-fn get_network_from_file() -> Net {
-  let net_string = std::fs::read_to_string("network_storage.txt")
-                           .expect("Unable to find network_storage.txt");
-  get_network_from_string(net_string)
+pub fn get_network_from_file(path: &str) -> Net {
+  match std::fs::read_to_string(path) {
+    Ok(string) => return get_network_from_string(string),
+    Err(_) => NET.lock().unwrap().clone()
+  }
 }
 
 fn is_hidden(text: &str) -> bool {
@@ -95,11 +96,9 @@ fn get_network_from_string(string: String) -> Net {
   for line in &lines {
     if is_hidden(line) { 
       number_of_hidden_layers = line[7..].parse::<usize>().unwrap();
-      println!("Hidden!");
     } 
     else if is_nodes_per_layer(line) {
       nodes_per_hidden_layer = line[6..].parse::<usize>().unwrap();
-      println!("{:?}", nodes_per_hidden_layer);
     }
     else if is_act_function(line) {
       act_fn = NAME_TO_FN[&line[4..]];
@@ -144,7 +143,7 @@ fn get_network_from_string(string: String) -> Net {
   network
 }
 
-fn write_network_to_file(network: Net, act_fn_name: &str, der_fn_name: &str) {
+pub fn write_network_to_file(network: Net, act_fn_name: &str, der_fn_name: &str, path: &str) {
   assert!(network.values.len() > 2, "Network must have at least one hidden layer. network_storage.rs, network_to_string");
   let nodes_per_hidden_layer = network.values[1].len();
   let number_of_hidden_layers = network.values.len() - 2;
@@ -209,12 +208,12 @@ fn write_network_to_file(network: Net, act_fn_name: &str, der_fn_name: &str) {
   net.push_str(&weights_string);
   net.push_str(&biases_string);
 
-  clear_file();
-  std::fs::write("network_storage.txt", net).expect("Unable to write file");
+  clear_file(path);
+  std::fs::write(path, net).expect("Unable to write file");
 }
 
-fn clear_file() {
-  match std::fs::remove_file("network_storage.txt") {
+fn clear_file(path: &str) {
+  match std::fs::remove_file(path) {
     Ok(removed) => removed,
     Err(_) => {}
   };
@@ -226,7 +225,22 @@ mod tests {
 
   #[test]
   fn writes_network_to_string() {
-    write_network_to_file(NET.lock().unwrap().clone(), "tanh", "tanh_der_clipped");
-    get_network_from_file();
+    let input_values = vec![0f64; 2];
+    let network = Net::create(input_values, 2, 2, tanh, tanh_der_clipped, 0.2);
+    write_network_to_file(network, "tanh", "tanh_der_clipped", "test_network_storage.txt");
+    get_network_from_file("test_network_storage.txt");
+  }
+
+  #[test]
+  #[ignore]
+  fn converts_network_to_file_and_back() {
+    let input_values = vec![0f64; 2];
+    let original_network = Net::create(input_values, 2, 2, tanh, tanh_der_clipped, 0.2);
+    write_network_to_file(original_network.clone(), "tanh", "tanh_der_clipped", "text_network_storage.txt");
+    let mut new_net = get_network_from_file("test_network_storage.txt");
+    new_net.weights[2][1][0] = 0.0f64;
+    // println!("{:?}", new_net);
+    println!("Race conditions resulting in default network being returned.");
+    assert!(original_network == new_net);
   }
 }

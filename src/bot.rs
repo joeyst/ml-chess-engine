@@ -3,6 +3,7 @@ use crate::constants::*;
 use std::collections::HashMap;
 use std::cmp;
 use rand::thread_rng;
+use crate::rand::Rng;
 use crate::rand::prelude::SliceRandom;
 use crate::rand::prelude::IteratorRandom;
 use crate::utility::{greater_than, less_than, min_f, max_f, number_of_bits};
@@ -43,6 +44,11 @@ pub fn basic_eval(state: [u64; 13]) -> f64 {
   collect_points(state)
 }
 
+pub fn random_eval(_state: [u64; 13]) -> f64 {
+  let mut rng = rand::thread_rng();
+  rng.gen_range(-50f64..50f64)
+}
+
 pub fn center_squares_worth(state: [u64; 13]) -> f64 {
   let occ_fns: Vec<fn([u64; 13]) -> u64> = vec![get_black_occupation_except_king, get_white_occupation_except_king, get_black_occupation_except_king, get_white_occupation_except_king];
   let squares: Vec<u64> = vec![CENTER_FOUR_SQUARES, CENTER_FOUR_SQUARES, SECOND_CENTER_SQUARES, SECOND_CENTER_SQUARES];
@@ -71,6 +77,13 @@ impl Bot {
     }
   }
 
+  pub fn get_state_quiet(&self, state: [u64; 13], turn_number: u8) -> [u64; 13] {
+    if turn_number % 2 == 0 {
+      self.get_state_black(state)
+    } else {
+      self.get_state_white(state)
+    }
+  }
   
 
   fn get_state_general(&self, state: [u64; 13], turn_number: u8, more_or_less: fn(f64, f64) -> bool, starting_value: f64) -> [u64; 13] {
